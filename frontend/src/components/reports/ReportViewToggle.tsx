@@ -26,66 +26,71 @@ export function ReportViewToggle({ tests }: ReportViewToggleProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
         {/* Filter Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto">
-          <span className="text-xs text-slate-400 mr-1 flex items-center gap-1">
-            <Filter className="w-3.5 h-3.5 text-slate-500" />
+          <span className="text-xs text-ink-muted mr-1 flex items-center gap-1">
+            <Filter className="w-3.5 h-3.5" aria-hidden="true" />
             Filter:
           </span>
           <button
+            type="button"
             onClick={() => setFilter("all")}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-chip text-xs font-medium transition-colors border tabular-nums ${
               filter === "all"
-                ? "bg-slate-800 text-teal-300 border border-slate-700"
-                : "text-slate-400 hover:text-white"
+                ? "bg-brand text-brand-contrast border-brand"
+                : "bg-surface text-ink-muted hover:text-ink border-border hover:border-border-strong"
             }`}
           >
-            All Tests ({tests.length})
+            All tests ({tests.length})
           </button>
           <button
+            type="button"
             onClick={() => setFilter("outside_range")}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-chip text-xs font-medium transition-colors border tabular-nums ${
               filter === "outside_range"
-                ? "bg-amber-950/80 text-amber-300 border border-amber-800"
-                : "text-slate-400 hover:text-white"
+                ? "bg-brand text-brand-contrast border-brand"
+                : "bg-surface text-ink-muted hover:text-ink border-border hover:border-border-strong"
             }`}
           >
-            Outside Reference ({tests.filter((t) => t.status !== "within_range").length})
+            Outside range ({tests.filter((t) => t.status !== "within_range").length})
           </button>
           <button
+            type="button"
             onClick={() => setFilter("anomalies")}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-chip text-xs font-medium transition-colors border tabular-nums ${
               filter === "anomalies"
-                ? "bg-indigo-950/80 text-indigo-300 border border-indigo-800"
-                : "text-slate-400 hover:text-white"
+                ? "bg-brand text-brand-contrast border-brand"
+                : "bg-surface text-ink-muted hover:text-ink border-border hover:border-border-strong"
             }`}
           >
-            ML Trend Shifts ({tests.filter((t) => t.anomaly).length})
+            Trend shifts ({tests.filter((t) => t.anomaly).length})
           </button>
         </div>
 
         {/* View Mode Toggle */}
-        <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 shrink-0 self-start sm:self-auto">
+        <div className="flex items-center bg-surface-subtle border border-border rounded-control p-0.5 shrink-0 self-start sm:self-auto">
           <button
+            type="button"
             onClick={() => setViewMode("cards")}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-control text-xs font-medium transition-colors ${
               viewMode === "cards"
-                ? "bg-slate-800 text-teal-300 shadow-sm"
-                : "text-slate-400 hover:text-white"
+                ? "bg-surface text-ink border border-border"
+                : "text-ink-muted hover:text-ink"
             }`}
             aria-label="Cards view"
           >
-            <LayoutGrid className="w-3.5 h-3.5" />
+            <LayoutGrid className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Cards</span>
           </button>
           <button
+            type="button"
             onClick={() => setViewMode("table")}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-control text-xs font-medium transition-colors ${
               viewMode === "table"
-                ? "bg-slate-800 text-teal-300 shadow-sm"
-                : "text-slate-400 hover:text-white"
+                ? "bg-surface text-ink border border-border"
+                : "text-ink-muted hover:text-ink"
             }`}
             aria-label="Table view"
           >
-            <TableProperties className="w-3.5 h-3.5" />
+            <TableProperties className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Table</span>
           </button>
         </div>
@@ -103,7 +108,7 @@ export function ReportViewToggle({ tests }: ReportViewToggleProps) {
       )}
 
       {filteredTests.length === 0 && (
-        <div className="p-8 text-center rounded-xl bg-slate-900/40 border border-slate-800 text-slate-400 text-sm">
+        <div className="p-8 text-center rounded-panel bg-surface border border-border text-ink-muted text-sm">
           No tests match the selected filter.
         </div>
       )}

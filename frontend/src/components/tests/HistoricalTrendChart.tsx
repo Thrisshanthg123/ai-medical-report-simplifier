@@ -48,35 +48,35 @@ function CustomTooltip({
       item.value >= referenceMin && item.value <= referenceMax;
 
     return (
-      <div className="rounded-xl border border-slate-700 bg-slate-900/95 p-3.5 shadow-xl backdrop-blur-md text-xs space-y-1.5 min-w-[180px]">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-          <span className="font-semibold text-white">{item.month_label} 2026</span>
-          <span className="text-[10px] text-slate-400 font-mono">{item.date}</span>
+      <div className="rounded-panel border border-border bg-surface p-3 text-xs space-y-1.5 min-w-[180px]">
+        <div className="flex items-center justify-between border-b border-border pb-1.5">
+          <span className="font-semibold text-ink">{item.month_label}</span>
+          <span className="text-[10px] text-ink-muted font-mono tabular-nums">{item.date}</span>
         </div>
 
         <div className="flex items-baseline justify-between pt-1">
-          <span className="text-slate-400">Reported Value:</span>
-          <span className="font-bold text-white text-sm">
+          <span className="text-ink-muted">Reported value:</span>
+          <span className="font-semibold text-ink text-sm tabular-nums">
             {item.value} {unit}
           </span>
         </div>
 
         <div className="flex items-center justify-between text-[11px]">
-          <span className="text-slate-500">Reference:</span>
-          <span className="font-mono text-slate-300">
+          <span className="text-ink-muted">Reference:</span>
+          <span className="font-mono text-ink-muted tabular-nums">
             {referenceMin} – {referenceMax} {unit}
           </span>
         </div>
 
         <div className="pt-1 text-[11px]">
           <span
-            className={`px-2 py-0.5 rounded-full inline-block font-medium ${
+            className={`px-2 py-0.5 rounded-panel inline-block font-medium border ${
               isWithin
-                ? "bg-emerald-950/80 text-emerald-300 border border-emerald-800/80"
-                : "bg-amber-950/80 text-amber-300 border border-amber-800/80"
+                ? "bg-status-success-bg text-status-success-text border-status-success-border"
+                : "bg-status-warning-bg text-status-warning-text border-status-warning-border"
             }`}
           >
-            {isWithin ? "Within reference range" : "Above reference range"}
+            {isWithin ? "In range" : "Above range"}
           </span>
         </div>
       </div>
@@ -100,7 +100,7 @@ export function HistoricalTrendChart({
 
   if (!mounted) {
     return (
-      <div className="h-[340px] w-full flex items-center justify-center bg-slate-900/40 rounded-xl border border-slate-800 text-xs text-slate-500">
+      <div className="h-[340px] w-full flex items-center justify-center bg-surface-subtle rounded-panel border border-border text-xs text-ink-muted">
         Loading chart visualization...
       </div>
     );
@@ -117,47 +117,47 @@ export function HistoricalTrendChart({
   return (
     <div className="space-y-3">
       {/* Legend & Reference Range indicator */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 px-1">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-ink-muted px-1">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-teal-400 inline-block shadow-sm shadow-teal-500/50" />
-            <span className="text-slate-300 font-medium">{testName} ({unit})</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-brand inline-block" />
+            <span className="text-ink font-medium">{testName} ({unit})</span>
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-2 rounded bg-teal-500/20 border border-teal-500/40 inline-block" />
-            <span>Target Reference Zone ({referenceMin} – {referenceMax} {unit})</span>
+            <span className="w-3 h-2 rounded-panel bg-brand/10 border border-brand/30 inline-block" />
+            <span>Target reference zone ({referenceMin} – {referenceMax} {unit})</span>
           </div>
         </div>
 
-        <span className="text-[11px] font-mono text-slate-500">
-          Source: Verified Patient Lab Panels (2026)
+        <span className="text-[11px] font-mono text-ink-subtle">
+          Longitudinal trend
         </span>
       </div>
 
       {/* Chart Canvas */}
-      <div className="h-[340px] w-full p-2 bg-slate-950/50 rounded-xl border border-slate-800/80">
+      <div className="h-[340px] w-full p-2 bg-surface rounded-panel border border-border">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
             margin={{ top: 20, right: 30, left: 10, bottom: 10 }}
           >
-            <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid stroke="#E4E1DB" strokeDasharray="3 3" vertical={false} />
 
             <XAxis
               dataKey="month_label"
-              stroke="#64748b"
+              stroke="#5A6578"
               fontSize={12}
               tickLine={false}
-              axisLine={{ stroke: "#334155" }}
+              axisLine={{ stroke: "#E4E1DB" }}
             />
 
             <YAxis
               domain={[domainMin, domainMax]}
-              stroke="#64748b"
+              stroke="#5A6578"
               fontSize={12}
               tickLine={false}
-              axisLine={{ stroke: "#334155" }}
+              axisLine={{ stroke: "#E4E1DB" }}
               unit={` ${unit.split("/")[0]}`}
             />
 
@@ -165,18 +165,18 @@ export function HistoricalTrendChart({
             <ReferenceArea
               y1={referenceMin}
               y2={referenceMax}
-              fill="#0d9488"
-              fillOpacity={0.08}
-              stroke="#0d9488"
+              fill="#144E4D"
+              fillOpacity={0.06}
+              stroke="#144E4D"
               strokeOpacity={0.25}
               strokeDasharray="2 2"
             />
 
             <ReferenceLine
               y={referenceMax}
-              stroke="#14b8a6"
+              stroke="#144E4D"
               strokeDasharray="4 4"
-              strokeOpacity={0.6}
+              strokeOpacity={0.4}
             />
 
             <Tooltip
@@ -192,18 +192,18 @@ export function HistoricalTrendChart({
             <Line
               type="monotone"
               dataKey="value"
-              stroke="#2dd4bf"
-              strokeWidth={3}
+              stroke="#144E4D"
+              strokeWidth={2.5}
               dot={{
-                r: 5,
-                fill: "#0f172a",
-                stroke: "#2dd4bf",
+                r: 4,
+                fill: "#FFFFFF",
+                stroke: "#144E4D",
                 strokeWidth: 2,
               }}
               activeDot={{
-                r: 7,
-                fill: "#2dd4bf",
-                stroke: "#ffffff",
+                r: 6,
+                fill: "#144E4D",
+                stroke: "#FFFFFF",
                 strokeWidth: 2,
               }}
               animationDuration={800}

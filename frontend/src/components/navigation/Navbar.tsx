@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Activity,
   Upload,
   LayoutDashboard,
   History,
@@ -31,34 +30,51 @@ export function Navbar() {
   const { user, signOut, loading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Close mobile drawer on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+      }
+    };
+    if (mobileOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [mobileOpen]);
+
   const handleSignOut = async () => {
     await signOut();
     router.push("/login");
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-white font-bold shadow-sm shadow-teal-500/20 group-hover:scale-105 transition-transform">
-            <Activity className="w-5 h-5 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold text-lg text-white tracking-tight">H2</span>
-              <span className="text-[10px] uppercase font-semibold tracking-wider text-teal-400 bg-teal-950/80 border border-teal-800/60 px-1.5 py-0.2 rounded">
-                Evaluator Preview
-              </span>
-            </div>
-            <span className="text-[11px] text-slate-400 -mt-1 font-normal hidden sm:inline">
-              Medical Report Simplifier
-            </span>
-          </div>
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-surface">
+      <div className="max-w-container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        {/* Logo / Brand Wordmark */}
+        <Link
+          href="/"
+          className="flex items-baseline gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 rounded-control"
+          aria-label="H2 Medical Report Simplifier Home"
+        >
+          <span className="font-serif font-semibold text-2xl text-ink tracking-tight">
+            H2
+          </span>
+          <span className="text-xs text-ink-muted hidden sm:inline font-normal">
+            Medical Report Simplifier
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav
+          className="hidden md:flex items-center gap-6 h-full"
+          aria-label="Main Navigation"
+        >
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -70,43 +86,47 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                  "inline-flex items-center gap-2 h-16 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2",
                   isActive
-                    ? "bg-teal-50 text-teal-800 border border-teal-200/80 font-semibold"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                    ? "border-brand text-brand font-semibold"
+                    : "border-transparent text-ink-muted hover:text-ink hover:border-border-strong"
                 )}
               >
-                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-teal-600" : "text-slate-400")} />
+                <Icon className="w-4 h-4" aria-hidden="true" />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Primary CTA / Auth Actions */}
+        {/* Primary Action Button & Auth Controls */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/upload"
-            className="inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white transition-all shadow-sm shadow-teal-900/30 hover:shadow-teal-900/50 active:scale-95"
+            className="inline-flex items-center gap-2 min-h-target px-4 py-2 rounded-control bg-brand hover:bg-brand-hover text-surface font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
           >
-            <Upload className="w-3.5 h-3.5" />
-            <span>Upload Report</span>
+            <Upload className="w-4 h-4" aria-hidden="true" />
+            <span>Upload report</span>
           </Link>
 
           {!loading && (
             <>
               {user ? (
-                <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
-                  <div className="flex items-center gap-1.5 text-xs text-slate-300 max-w-[140px] truncate" title={user.email}>
-                    <div className="w-6 h-6 rounded-full bg-teal-950 border border-teal-800/80 flex items-center justify-center text-teal-300 shrink-0">
+                <div className="flex items-center gap-2 pl-2 border-l border-border">
+                  <div
+                    className="flex items-center gap-1.5 text-xs text-ink max-w-[140px] truncate"
+                    title={user.email}
+                  >
+                    <div className="w-6 h-6 rounded-full bg-brand-tint border border-brand/30 flex items-center justify-center text-brand shrink-0">
                       <UserIcon className="w-3 h-3" />
                     </div>
                     <span className="truncate">{user.email?.split("@")[0]}</span>
                   </div>
                   <button
                     onClick={handleSignOut}
-                    className="p-2 rounded-lg text-slate-400 hover:text-rose-300 hover:bg-rose-950/40 transition-colors"
+                    className="p-1.5 rounded-control text-ink-muted hover:text-status-outside-text hover:bg-status-outside-bg transition-colors"
                     title="Sign Out"
                     aria-label="Sign Out"
                   >
@@ -114,17 +134,17 @@ export function Navbar() {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+                <div className="flex items-center gap-2 pl-2 border-l border-border">
                   <Link
                     href="/login"
-                    className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                    className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-control text-ink-muted hover:text-ink hover:bg-surface-subtle transition-colors"
                   >
                     <LogIn className="w-3.5 h-3.5" />
                     <span>Log In</span>
                   </Link>
                   <Link
                     href="/signup"
-                    className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-700 text-slate-200 hover:border-slate-600 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-control border border-border text-ink hover:bg-surface-subtle transition-colors"
                   >
                     <span>Sign Up</span>
                   </Link>
@@ -136,17 +156,28 @@ export function Navbar() {
 
         {/* Mobile menu trigger */}
         <button
+          type="button"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
-          aria-label="Toggle navigation menu"
+          className="md:hidden min-h-target min-w-target inline-flex items-center justify-center p-2 rounded-control text-ink-muted hover:text-ink hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-navigation"
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {mobileOpen ? (
+            <X className="w-6 h-6" aria-hidden="true" />
+          ) : (
+            <Menu className="w-6 h-6" aria-hidden="true" />
+          )}
         </button>
       </div>
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="md:hidden border-b border-slate-800 bg-slate-900/95 px-4 pt-2 pb-4 space-y-2">
+        <nav
+          id="mobile-navigation"
+          aria-label="Mobile Navigation"
+          className="md:hidden border-b border-border bg-surface px-4 pt-2 pb-4 space-y-1"
+        >
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -158,52 +189,51 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setMobileOpen(false)}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                  "flex items-center gap-3 min-h-target-lg px-3 py-3 rounded-control text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand",
                   isActive
-                    ? "bg-slate-800 text-teal-300"
-                    : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                    ? "bg-brand-tint text-brand font-semibold"
+                    : "text-ink-muted hover:text-ink hover:bg-surface-subtle"
                 )}
               >
-                <Icon className={cn("w-4 h-4", isActive ? "text-teal-400" : "text-slate-400")} />
+                <Icon className="w-5 h-5 text-ink-muted" aria-hidden="true" />
                 <span>{item.label}</span>
               </Link>
             );
           })}
 
-          <div className="pt-2 border-t border-slate-800 space-y-2">
+          <div className="pt-2 border-t border-border space-y-2">
             <Link
               href="/upload"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-teal-600 text-white font-medium text-sm"
+              className="flex items-center justify-center gap-2 min-h-target-lg w-full py-3 rounded-control bg-brand hover:bg-brand-hover text-surface font-semibold text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
             >
-              <Upload className="w-4 h-4" />
-              <span>Upload Report</span>
+              <Upload className="w-5 h-5" aria-hidden="true" />
+              <span>Upload report</span>
             </Link>
 
             {user ? (
-              <div className="pt-2 space-y-2">
-                <div className="px-3 py-1.5 text-xs text-slate-400 truncate">
-                  Signed in as <span className="text-slate-200 font-medium">{user.email}</span>
+              <div className="pt-2 space-y-2 border-t border-border">
+                <div className="px-3 py-1.5 text-xs text-ink-muted truncate">
+                  Signed in as <span className="text-ink font-medium">{user.email}</span>
                 </div>
                 <button
                   onClick={() => {
                     setMobileOpen(false);
                     handleSignOut();
                   }}
-                  className="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-rose-950/40 border border-rose-800/60 text-rose-300 font-medium text-sm"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-control bg-status-outside-bg border border-status-outside-border text-status-outside-text font-medium text-sm"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Sign Out</span>
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2 pt-1">
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border">
                 <Link
                   href="/login"
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-slate-800 text-slate-200 text-xs font-medium"
+                  className="flex items-center justify-center gap-1.5 py-2 rounded-control bg-surface-subtle text-ink text-xs font-medium border border-border"
                 >
                   <LogIn className="w-3.5 h-3.5" />
                   <span>Log In</span>
@@ -211,14 +241,14 @@ export function Navbar() {
                 <Link
                   href="/signup"
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2 rounded-lg border border-slate-700 text-slate-200 text-xs font-medium text-center"
+                  className="flex items-center justify-center gap-1.5 py-2 rounded-control border border-border text-ink text-xs font-medium text-center hover:bg-surface-subtle"
                 >
                   <span>Sign Up</span>
                 </Link>
               </div>
             )}
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );

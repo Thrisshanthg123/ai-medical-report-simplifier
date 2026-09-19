@@ -27,15 +27,15 @@ export function TestResultCard({ test }: TestResultCardProps) {
       : 50;
 
   return (
-    <Card className="hover:border-slate-700 transition-all duration-200 flex flex-col justify-between overflow-hidden group">
+    <Card className="flex flex-col justify-between overflow-hidden group">
       <div className="p-5 space-y-4">
         {/* Card Header: Category & Flags */}
         <div className="flex items-start justify-between gap-2">
           <div>
-            <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400">
+            <span className="text-[10px] uppercase font-mono tracking-wider text-ink-muted">
               {test.category}
             </span>
-            <h3 className="text-base font-bold text-white mt-0.5 group-hover:text-teal-300 transition-colors">
+            <h3 className="text-base font-serif font-semibold text-ink mt-0.5 group-hover:text-brand transition-colors">
               <Link href={`/tests/${test.slug}`}>{test.test_name}</Link>
             </h3>
           </div>
@@ -44,39 +44,31 @@ export function TestResultCard({ test }: TestResultCardProps) {
             <StatusBadge status={test.status} />
             <div className="flex items-center gap-1.5">
               <TrendBadge trend={test.trend} compact />
-              {test.anomaly && <AnomalyBadge label="Anomaly" />}
+              {test.anomaly && <AnomalyBadge label="Shift detected" />}
             </div>
           </div>
         </div>
 
         {/* Value and Reference Display */}
-        <div className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800/80 space-y-2">
+        <div className="bg-surface-subtle rounded-control p-3.5 border border-border space-y-2">
           <div className="flex items-baseline justify-between">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-extrabold text-white tracking-tight">
+              <span className="text-2xl font-semibold text-ink tracking-tight tabular-nums">
                 {test.value}
               </span>
-              <span className="text-xs font-semibold text-slate-400">
+              <span className="text-xs text-ink-muted">
                 {test.unit}
               </span>
             </div>
 
             {test.previous_value !== undefined && (
               <div className="text-right text-xs">
-                <span className="text-slate-500 block">Previous:</span>
-                <span className="font-semibold text-slate-300">
+                <span className="text-ink-muted block">Previous:</span>
+                <span className="font-medium text-ink tabular-nums">
                   {test.previous_value} {test.unit}
                 </span>
                 {test.change_absolute !== undefined && (
-                  <span
-                    className={`text-[11px] font-mono ml-1 ${
-                      test.change_absolute > 0
-                        ? "text-amber-400"
-                        : test.change_absolute < 0
-                        ? "text-teal-400"
-                        : "text-slate-400"
-                    }`}
-                  >
+                  <span className="text-xs text-ink-muted ml-1 tabular-nums">
                     ({test.change_absolute > 0 ? "+" : ""}
                     {test.change_absolute})
                   </span>
@@ -87,22 +79,22 @@ export function TestResultCard({ test }: TestResultCardProps) {
 
           {/* Reference Interval Bar */}
           <div className="space-y-1 pt-1">
-            <div className="flex items-center justify-between text-[11px] text-slate-400">
+            <div className="flex items-center justify-between text-xs text-ink-muted">
               <span>Ref: {test.reference_range}</span>
-              <span className="text-slate-500">
-                Boundaries: {test.reference_min} – {test.reference_max}
+              <span className="tabular-nums">
+                Limits: {test.reference_min} – {test.reference_max}
               </span>
             </div>
 
-            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden relative">
+            <div className="w-full h-1.5 bg-surface border border-border rounded-chip overflow-hidden relative">
               {/* Reference zone marker */}
-              <div className="absolute left-[20%] right-[20%] top-0 bottom-0 bg-teal-500/20 rounded-full" />
+              <div className="absolute left-[20%] right-[20%] top-0 bottom-0 bg-surface-subtle rounded-chip" />
               {/* Value indicator dot */}
               <div
-                className={`absolute top-0 bottom-0 w-2.5 rounded-full -ml-1 ${
+                className={`absolute top-0 bottom-0 w-2.5 rounded-chip -ml-1 ${
                   test.status === "within_range"
-                    ? "bg-emerald-400 shadow-sm shadow-emerald-500"
-                    : "bg-amber-400 shadow-sm shadow-amber-500"
+                    ? "bg-status-in-range-text"
+                    : "bg-status-outside-text"
                 }`}
                 style={{ left: `${currentRatio}%` }}
               />
@@ -111,18 +103,18 @@ export function TestResultCard({ test }: TestResultCardProps) {
         </div>
 
         {/* Plain Language Explanation */}
-        <p className="text-xs text-slate-300 leading-relaxed">
+        <p className="text-xs text-ink-muted leading-relaxed">
           {test.simple_explanation}
         </p>
 
         {/* Machine Learning Trajectory Callout */}
         {test.ml_analysis && (
-          <div className="p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs space-y-1">
-            <div className="flex items-center justify-between text-[10px] text-teal-400 font-mono">
-              <span className="uppercase font-semibold">ML Trajectory Analysis</span>
+          <div className="p-3 rounded-control bg-surface-subtle border border-border text-xs space-y-1">
+            <div className="flex items-center justify-between text-xs text-brand font-medium">
+              <span className="uppercase tracking-wider">Trend Analysis</span>
               <span>{test.ml_analysis.change_label}</span>
             </div>
-            <p className="text-slate-300 italic">
+            <p className="text-ink leading-relaxed">
               &ldquo;{test.ml_analysis.explanation}&rdquo;
             </p>
           </div>
@@ -130,16 +122,18 @@ export function TestResultCard({ test }: TestResultCardProps) {
       </div>
 
       {/* Card Footer Link */}
-      <div className="px-5 py-3 bg-slate-950/40 border-t border-slate-800/60 flex items-center justify-between">
-        <span className="text-[11px] text-slate-500">
-          4 historical data points available
+      <div className="px-5 py-3 bg-surface-subtle border-t border-border flex items-center justify-between text-xs">
+        <span className="text-ink-muted">
+          {test.historical_values?.length
+            ? `${test.historical_values.length} recorded data points`
+            : "Tracked across visits"}
         </span>
         <Link
           href={`/tests/${test.slug}`}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-400 hover:text-teal-300 transition-colors"
+          className="inline-flex items-center gap-1.5 font-medium text-brand hover:text-brand-hover transition-colors min-h-target items-center"
         >
-          <span>Explore Trend Chart</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <span>View trend history</span>
+          <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
         </Link>
       </div>
     </Card>

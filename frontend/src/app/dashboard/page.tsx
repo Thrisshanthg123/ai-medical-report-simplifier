@@ -19,31 +19,33 @@ export default async function DashboardPage() {
 
   return (
     <ProtectedRoute>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Dashboard Top Header */}
-        <DashboardHeader />
+      <div className="bg-canvas text-ink py-6 sm:py-10">
+        <div className="max-w-container mx-auto px-4 sm:px-6 space-y-8">
+          {/* Dashboard Top Header */}
+          <DashboardHeader />
 
-        {/* Meaningful Statistics Overview */}
-        <StatsOverview
-          reportsAnalyzed={reports.length}
-          testsTracked={tests.length}
-          trendsDetected={tests.filter((t) => t.trend !== "stable").length}
-          reportsThisMonth={reports.length > 0 ? 1 : 0}
-        />
+          {/* Meaningful Statistics Overview */}
+          <StatsOverview
+            reportsAnalyzed={reports.length}
+            testsTracked={tests.length}
+            trendsDetected={tests.filter((t) => t.trend !== "stable").length}
+            reportsThisMonth={reports.length > 0 ? 1 : 0}
+          />
 
-        {/* Two Column Grid: Recent Reports & Key ML Insights */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-7">
-            <RecentReportsList reports={reports} />
+          {/* Two Column Grid: Recent Reports & Key ML Insights */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-7">
+              <RecentReportsList reports={reports} />
+            </div>
+
+            <div className="lg:col-span-5">
+              <KeyInsightsList tests={tests} />
+            </div>
           </div>
 
-          <div className="lg:col-span-5">
-            <KeyInsightsList tests={tests} />
-          </div>
+          {/* Unobtrusive Responsible AI Disclaimer */}
+          <DisclaimerNotice />
         </div>
-
-        {/* Unobtrusive Responsible AI Disclaimer */}
-        <DisclaimerNotice />
       </div>
     </ProtectedRoute>
   );

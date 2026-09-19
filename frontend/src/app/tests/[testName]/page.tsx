@@ -8,7 +8,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Minus,
-  Sparkles,
   GitCompare,
 } from "lucide-react";
 import { getTestHistory } from "@/lib/api";
@@ -54,173 +53,165 @@ export default async function TestDetailPage({ params }: TestPageProps) {
 
   return (
     <ProtectedRoute>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Top Navigation Row */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Dashboard</span>
-          </Link>
-
-          <div className="flex items-center gap-2">
+      <div className="bg-canvas text-ink py-6 sm:py-10">
+        <div className="max-w-container mx-auto px-4 sm:px-6 space-y-8">
+          {/* Top Navigation Row */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <Link
-              href="/compare"
-              className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink transition-colors"
             >
-              <GitCompare className="w-3.5 h-3.5" />
-              <span>Compare Reports</span>
+              <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Back to Dashboard</span>
             </Link>
-          </div>
-        </div>
 
-        {/* Biomarker Selector Bar */}
-        <TestSelectorNav
-          currentSlug={test.slug}
-          allTests={[test]}
-        />
-
-        {/* Header and Live Stats Card */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-xs font-semibold uppercase tracking-wider text-teal-400">
-                  {test.category}
-                </span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
-                  Longitudinal Tracking
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                {test.test_name}
-              </h1>
-              <p className="text-xs text-slate-400 mt-1 max-w-xl leading-relaxed">
-                {test.simple_explanation}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 shrink-0">
-              <StatusBadge status={test.status} />
-              <TrendBadge trend={test.trend} />
-              {test.anomaly && <AnomalyBadge label="Shift Detected" />}
+            <div className="flex items-center gap-2">
+              <Link
+                href="/compare"
+                className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-control bg-surface-subtle hover:bg-surface text-ink border border-border transition-colors min-h-target items-center"
+              >
+                <GitCompare className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Compare reports</span>
+              </Link>
             </div>
           </div>
 
-          {/* Current vs Previous Comparison Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2 border-t border-slate-800/80">
-            <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800">
-              <span className="text-[11px] text-slate-400 block mb-0.5">
-                Current (September)
-              </span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-white">{test.value}</span>
-                <span className="text-xs text-slate-400 font-mono">{test.unit}</span>
-              </div>
-              <span className="text-[10px] text-slate-500 block mt-1">
-                Latest recorded panel
-              </span>
-            </div>
+          {/* Test Selector Bar */}
+          <TestSelectorNav
+            currentSlug={test.slug}
+            allTests={[test]}
+          />
 
-            <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800">
-              <span className="text-[11px] text-slate-400 block mb-0.5">
-                Previous (July)
-              </span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-slate-300">
-                  {test.previous_value ?? "—"}
-                </span>
-                <span className="text-xs text-slate-400 font-mono">{test.unit}</span>
-              </div>
-              <span className="text-[10px] text-slate-500 block mt-1">
-                Prior quarter checkup
-              </span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800">
-              <span className="text-[11px] text-slate-400 block mb-0.5">
-                Change from Prior
-              </span>
-              <div className="flex items-baseline gap-1">
-                {test.change_absolute !== undefined ? (
-                  <span
-                    className={`text-2xl font-bold ${
-                      test.change_absolute > 0
-                        ? "text-amber-400"
-                        : test.change_absolute < 0
-                        ? "text-teal-400"
-                        : "text-slate-300"
-                    }`}
-                  >
-                    {test.change_absolute > 0 ? "+" : ""}
-                    {test.change_absolute}
+          {/* Header and Live Stats Card */}
+          <div className="rounded-panel border border-border bg-surface p-6 space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-brand">
+                    {test.category}
                   </span>
-                ) : (
-                  <span className="text-2xl font-bold text-slate-300">—</span>
-                )}
-                <span className="text-xs text-slate-400 font-mono">{test.unit}</span>
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-chip bg-surface-subtle border border-border text-ink-muted">
+                    Longitudinal test
+                  </span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-serif font-semibold text-ink tracking-tight">
+                  {test.test_name}
+                </h1>
+                <p className="text-xs sm:text-sm text-ink-muted mt-1 max-w-xl leading-relaxed">
+                  {test.simple_explanation}
+                </p>
               </div>
-              <span className="text-[10px] text-slate-500 block mt-1">
-                {test.change_percentage !== undefined
-                  ? `${test.change_percentage > 0 ? "+" : ""}${test.change_percentage}% relative shift`
-                  : "No baseline delta"}
-              </span>
+
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <StatusBadge status={test.status} />
+                <TrendBadge trend={test.trend} />
+                {test.anomaly && <AnomalyBadge label="Shift detected" />}
+              </div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800">
-              <span className="text-[11px] text-slate-400 block mb-0.5">
-                Reference Interval
-              </span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-xl font-bold text-slate-200">
-                  {test.reference_min} – {test.reference_max}
+            {/* Current vs Previous Comparison Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2 border-t border-border">
+              <div className="p-3.5 rounded-control bg-surface-subtle border border-border">
+                <span className="text-xs text-ink-muted block mb-0.5">
+                  Current result
                 </span>
-                <span className="text-xs text-slate-400 font-mono">{test.unit}</span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-semibold text-ink tabular-nums">{test.value}</span>
+                  <span className="text-xs text-ink-muted font-mono">{test.unit}</span>
+                </div>
+                <span className="text-[11px] text-ink-muted block mt-1">
+                  Most recent test
+                </span>
               </div>
-              <span className="text-[10px] text-slate-500 block mt-1">
-                Standard clinical boundaries
-              </span>
+
+              <div className="p-3.5 rounded-control bg-surface-subtle border border-border">
+                <span className="text-xs text-ink-muted block mb-0.5">
+                  Previous result
+                </span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-semibold text-ink tabular-nums">
+                    {test.previous_value ?? "—"}
+                  </span>
+                  <span className="text-xs text-ink-muted font-mono">{test.unit}</span>
+                </div>
+                <span className="text-[11px] text-ink-muted block mt-1">
+                  Prior recorded test
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-control bg-surface-subtle border border-border">
+                <span className="text-xs text-ink-muted block mb-0.5">
+                  Change from prior
+                </span>
+                <div className="flex items-baseline gap-1">
+                  {test.change_absolute !== undefined ? (
+                    <span className="text-2xl font-semibold text-ink tabular-nums">
+                      {test.change_absolute > 0 ? "+" : ""}
+                      {test.change_absolute}
+                    </span>
+                  ) : (
+                    <span className="text-2xl font-semibold text-ink tabular-nums">—</span>
+                  )}
+                  <span className="text-xs text-ink-muted font-mono">{test.unit}</span>
+                </div>
+                <span className="text-[11px] text-ink-muted block mt-1">
+                  {test.change_percentage !== undefined
+                    ? `${test.change_percentage > 0 ? "+" : ""}${test.change_percentage}% relative shift`
+                    : "No prior baseline"}
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-control bg-surface-subtle border border-border">
+                <span className="text-xs text-ink-muted block mb-0.5">
+                  Reference interval
+                </span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xl font-semibold text-ink tabular-nums">
+                    {test.reference_min} – {test.reference_max}
+                  </span>
+                  <span className="text-xs text-ink-muted font-mono">{test.unit}</span>
+                </div>
+                <span className="text-[11px] text-ink-muted block mt-1">
+                  Standard clinical range
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Interactive Recharts Visualization */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 space-y-4">
-          <div className="flex items-center justify-between">
+          {/* Interactive Visualization */}
+          <div className="rounded-panel border border-border bg-surface p-6 space-y-4">
             <div>
-              <h2 className="text-lg font-bold text-white">
-                Longitudinal Trendline
+              <h2 className="text-lg font-serif font-semibold text-ink">
+                Historical Trendline
               </h2>
-              <p className="text-xs text-slate-400">
-                Interactive historical trajectory across available quarters in 2026
+              <p className="text-xs text-ink-muted">
+                Historical test trajectory across recorded visits
               </p>
             </div>
+
+            <HistoricalTrendChart
+              data={history}
+              unit={test.unit}
+              referenceMin={test.reference_min}
+              referenceMax={test.reference_max}
+              testName={test.test_name}
+            />
           </div>
 
-          <HistoricalTrendChart
-            data={history}
-            unit={test.unit}
-            referenceMin={test.reference_min}
-            referenceMax={test.reference_max}
-            testName={test.test_name}
-          />
+          {/* ML Insight Presentation */}
+          {test.ml_analysis && (
+            <MLInsightCard
+              analysis={test.ml_analysis}
+              testName={test.test_name}
+            />
+          )}
+
+          {/* Historical Data Table */}
+          <HistoricalTable history={history} unit={test.unit} />
+
+          {/* Responsible AI Disclaimer */}
+          <DisclaimerNotice />
         </div>
-
-        {/* ML Insight Presentation */}
-        {test.ml_analysis && (
-          <MLInsightCard
-            analysis={test.ml_analysis}
-            testName={test.test_name}
-          />
-        )}
-
-        {/* Historical Data Table */}
-        <HistoricalTable history={history} unit={test.unit} />
-
-        {/* Responsible AI Disclaimer */}
-        <DisclaimerNotice />
       </div>
     </ProtectedRoute>
   );

@@ -9,7 +9,6 @@ import {
   ArrowDownRight,
   Minus,
   Calendar,
-  Sparkles,
   Info,
 } from "lucide-react";
 import { MedicalReport, ReportComparisonItem } from "@/types/medical";
@@ -38,24 +37,36 @@ export function ComparisonView({
 
   if (!reports || reports.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-12 text-center">
-        <GitCompare className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-        <h3 className="text-base font-semibold text-white">No Reports Available</h3>
-        <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-          No medical reports available to compare. Upload reports to evaluate biomarker shifts over time.
+      <div className="rounded-panel border border-border bg-surface p-12 text-center space-y-3">
+        <GitCompare className="w-8 h-8 text-ink-muted mx-auto mb-2" aria-hidden="true" />
+        <h3 className="text-base font-serif font-semibold text-ink">No Reports Available</h3>
+        <p className="text-xs text-ink-muted max-w-sm mx-auto">
+          No medical reports uploaded yet. Upload a report to see your results here.
         </p>
+        <Link
+          href="/upload"
+          className="inline-block text-xs font-medium text-brand hover:text-brand-hover underline pt-1"
+        >
+          Upload a report
+        </Link>
       </div>
     );
   }
 
   if (reports.length < 2) {
     return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-12 text-center">
-        <GitCompare className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-        <h3 className="text-base font-semibold text-white">Only One Report Recorded</h3>
-        <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-          At least two medical reports are required to perform a longitudinal comparative analysis.
+      <div className="rounded-panel border border-border bg-surface p-12 text-center space-y-3">
+        <GitCompare className="w-8 h-8 text-ink-muted mx-auto mb-2" aria-hidden="true" />
+        <h3 className="text-base font-serif font-semibold text-ink">Two Reports Needed</h3>
+        <p className="text-xs text-ink-muted max-w-sm mx-auto">
+          At least two medical reports are required to perform a comparative analysis over time.
         </p>
+        <Link
+          href="/upload"
+          className="inline-block text-xs font-medium text-brand hover:text-brand-hover underline pt-1"
+        >
+          Upload another report
+        </Link>
       </div>
     );
   }
@@ -107,10 +118,10 @@ export function ComparisonView({
   return (
     <div className="space-y-8">
       {/* Selector Card */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 space-y-4">
+      <div className="rounded-panel border border-border bg-surface p-5 sm:p-6 space-y-4">
         <div className="flex items-center gap-2 mb-1">
-          <GitCompare className="w-4 h-4 text-teal-400" />
-          <h3 className="text-sm font-semibold text-white">
+          <GitCompare className="w-4 h-4 text-brand" aria-hidden="true" />
+          <h3 className="text-base font-serif font-semibold text-ink">
             Select Reports to Compare
           </h3>
         </div>
@@ -118,13 +129,13 @@ export function ComparisonView({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Base Report Selection */}
           <div className="space-y-1.5">
-            <label className="text-xs text-slate-400 font-medium">
-              Baseline Report (Earlier):
+            <label className="text-xs text-ink-muted font-medium">
+              Baseline report (earlier):
             </label>
             <select
               value={baseId}
               onChange={(e) => setBaseId(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-teal-500 transition-colors"
+              className="w-full bg-surface border border-border rounded-control px-3.5 py-2.5 text-xs text-ink focus:outline-none focus:border-brand transition-colors"
             >
               {reports.map((r) => (
                 <option key={r.id} value={r.id} disabled={r.id === compareId}>
@@ -136,13 +147,13 @@ export function ComparisonView({
 
           {/* Comparison Report Selection */}
           <div className="space-y-1.5">
-            <label className="text-xs text-slate-400 font-medium">
-              Target Report (Later):
+            <label className="text-xs text-ink-muted font-medium">
+              Comparison report (later):
             </label>
             <select
               value={compareId}
               onChange={(e) => setCompareId(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-teal-500 transition-colors"
+              className="w-full bg-surface border border-border rounded-control px-3.5 py-2.5 text-xs text-ink focus:outline-none focus:border-brand transition-colors"
             >
               {reports.map((r) => (
                 <option key={r.id} value={r.id} disabled={r.id === baseId}>
@@ -156,56 +167,56 @@ export function ComparisonView({
 
       {/* Overview Stat Badges */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
-          <span className="text-[11px] text-slate-400 block mb-1">Higher Values</span>
-          <span className="text-2xl font-bold text-amber-400 font-mono">
+        <div className="p-4 rounded-panel bg-surface border border-border text-center">
+          <span className="text-xs text-ink-muted block mb-1">Higher Values</span>
+          <span className="text-2xl font-semibold text-ink font-mono tabular-nums">
             {increasedCount}
           </span>
-          <span className="text-[10px] text-slate-500 block mt-0.5">
-            e.g. Fasting Glucose (+11 mg/dL)
+          <span className="text-[11px] text-ink-muted block mt-0.5">
+            Higher than baseline
           </span>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
-          <span className="text-[11px] text-slate-400 block mb-1">Lower Values</span>
-          <span className="text-2xl font-bold text-teal-400 font-mono">
+        <div className="p-4 rounded-panel bg-surface border border-border text-center">
+          <span className="text-xs text-ink-muted block mb-1">Lower Values</span>
+          <span className="text-2xl font-semibold text-ink font-mono tabular-nums">
             {decreasedCount}
           </span>
-          <span className="text-[10px] text-slate-500 block mt-0.5">
-            e.g. Vitamin D (-5 ng/mL)
+          <span className="text-[11px] text-ink-muted block mt-0.5">
+            Lower than baseline
           </span>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
-          <span className="text-[11px] text-slate-400 block mb-1">Stable Markers</span>
-          <span className="text-2xl font-bold text-slate-300 font-mono">
+        <div className="p-4 rounded-panel bg-surface border border-border text-center">
+          <span className="text-xs text-ink-muted block mb-1">Stable Tests</span>
+          <span className="text-2xl font-semibold text-ink font-mono tabular-nums">
             {stableCount}
           </span>
-          <span className="text-[10px] text-slate-500 block mt-0.5">
-            Within natural variance
+          <span className="text-[11px] text-ink-muted block mt-0.5">
+            Consistent with baseline
           </span>
         </div>
       </div>
 
       {/* Comparison Table */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+      <div className="rounded-panel border border-border bg-surface overflow-hidden">
+        <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h4 className="text-sm font-semibold text-white">
-              Biomarker Comparison Matrix
+            <h4 className="text-sm font-serif font-semibold text-ink">
+              Test Comparison Matrix
             </h4>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-ink-muted">
               Comparing {formatDate(earlierReport.date)} with {formatDate(laterReport.date)}
             </p>
           </div>
-          <span className="text-xs text-slate-400 font-mono">
-            {comparisons.length} biomarkers evaluated
+          <span className="text-xs text-ink-muted tabular-nums">
+            {comparisons.length} tests compared
           </span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+            <thead className="bg-surface-subtle border-b border-border text-ink-muted font-medium uppercase tracking-wider text-[11px]">
               <tr>
                 <th className="py-3 px-4">Test</th>
                 <th className="py-3 px-4">
@@ -214,60 +225,60 @@ export function ComparisonView({
                 <th className="py-3 px-4">
                   Current ({new Date(laterReport.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })})
                 </th>
-                <th className="py-3 px-4">Absolute & Pct Change</th>
-                <th className="py-3 px-4">Reference Range</th>
+                <th className="py-3 px-4">Change</th>
+                <th className="py-3 px-4">Reference range</th>
                 <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Trend</th>
+                <th className="py-3 px-4 text-right">Trend history</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-300">
+            <tbody className="divide-y divide-border text-ink">
               {comparisons.map((item) => {
                 return (
-                  <tr key={item.slug} className="hover:bg-slate-800/30 transition-colors">
+                  <tr key={item.slug} className="hover:bg-surface-subtle transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="text-white font-semibold">{item.test_name}</div>
-                      <span className="text-[10px] text-slate-500 font-mono">{item.unit}</span>
+                      <div className="font-medium text-ink">{item.test_name}</div>
+                      <span className="text-[10px] text-ink-muted font-mono">{item.unit}</span>
                     </td>
 
-                    <td className="py-3.5 px-4 font-mono">
-                      <span className="text-slate-300 font-semibold text-sm">
+                    <td className="py-3.5 px-4 font-mono tabular-nums">
+                      <span className="text-ink font-medium text-sm">
                         {item.previous_value}
                       </span>{" "}
-                      <span className="text-slate-500 text-xs">{item.unit}</span>
+                      <span className="text-ink-muted text-xs">{item.unit}</span>
                     </td>
 
-                    <td className="py-3.5 px-4 font-mono">
-                      <span className="text-white font-bold text-sm">
+                    <td className="py-3.5 px-4 font-mono tabular-nums">
+                      <span className="text-ink font-semibold text-sm">
                         {item.current_value}
                       </span>{" "}
-                      <span className="text-slate-400 text-xs">{item.unit}</span>
+                      <span className="text-ink-muted text-xs">{item.unit}</span>
                     </td>
 
-                    <td className="py-3.5 px-4 font-mono">
+                    <td className="py-3.5 px-4 font-mono tabular-nums">
                       {item.change_absolute > 0 ? (
-                        <div className="inline-flex items-center gap-1 text-amber-400 font-semibold text-xs">
-                          <ArrowUpRight className="w-3.5 h-3.5" />
+                        <div className="inline-flex items-center gap-1 text-ink font-medium text-xs">
+                          <ArrowUpRight className="w-3.5 h-3.5 text-ink-muted" aria-hidden="true" />
                           <span>+{item.change_absolute} {item.unit}</span>
-                          <span className="text-[10px] text-amber-500/90">
+                          <span className="text-[11px] text-ink-muted">
                             (+{item.change_percentage}%)
                           </span>
                         </div>
                       ) : item.change_absolute < 0 ? (
-                        <div className="inline-flex items-center gap-1 text-teal-400 font-semibold text-xs">
-                          <ArrowDownRight className="w-3.5 h-3.5" />
+                        <div className="inline-flex items-center gap-1 text-ink font-medium text-xs">
+                          <ArrowDownRight className="w-3.5 h-3.5 text-ink-muted" aria-hidden="true" />
                           <span>{item.change_absolute} {item.unit}</span>
-                          <span className="text-[10px] text-teal-500/90">
+                          <span className="text-[11px] text-ink-muted">
                             ({item.change_percentage}%)
                           </span>
                         </div>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-slate-400 text-xs">
-                          <Minus className="w-3.5 h-3.5" /> 0.0 (0%)
+                        <span className="inline-flex items-center gap-1 text-ink-muted text-xs">
+                          <Minus className="w-3.5 h-3.5" aria-hidden="true" /> 0.0 (0%)
                         </span>
                       )}
                     </td>
 
-                    <td className="py-3.5 px-4 font-mono text-slate-400">
+                    <td className="py-3.5 px-4 font-mono text-ink-muted tabular-nums">
                       {item.reference_range}
                     </td>
 
@@ -278,10 +289,10 @@ export function ComparisonView({
                     <td className="py-3.5 px-4 text-right">
                       <Link
                         href={`/tests/${item.slug}`}
-                        className="inline-flex items-center gap-1 text-teal-400 hover:text-teal-300 font-medium text-xs"
+                        className="inline-flex items-center gap-1 text-brand hover:text-brand-hover font-medium text-xs"
                       >
                         <span>History</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                       </Link>
                     </td>
                   </tr>

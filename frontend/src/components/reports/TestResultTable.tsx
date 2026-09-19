@@ -12,46 +12,46 @@ interface TestResultTableProps {
 
 export function TestResultTable({ tests }: TestResultTableProps) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden shadow-sm">
+    <div className="rounded-panel border border-border bg-surface overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+          <thead className="bg-surface-subtle border-b border-border text-ink-muted font-medium uppercase tracking-wider text-[11px]">
             <tr>
-              <th className="py-3 px-4">Test Name & Panel</th>
-              <th className="py-3 px-4">Current Value</th>
-              <th className="py-3 px-4">Reference Range</th>
-              <th className="py-3 px-4">Clinical Status</th>
-              <th className="py-3 px-4">Historical Trend</th>
-              <th className="py-3 px-4">ML Anomaly</th>
-              <th className="py-3 px-4 text-right">Interactive Detail</th>
+              <th className="py-3 px-4">Test name & panel</th>
+              <th className="py-3 px-4">Current value</th>
+              <th className="py-3 px-4">Reference range</th>
+              <th className="py-3 px-4">Status</th>
+              <th className="py-3 px-4">Trend</th>
+              <th className="py-3 px-4">Attention</th>
+              <th className="py-3 px-4 text-right">Details</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60 text-slate-300">
+          <tbody className="divide-y divide-border text-ink">
             {tests.map((test) => (
               <tr
                 key={test.id}
-                className="hover:bg-slate-800/30 transition-colors"
+                className="hover:bg-surface-subtle transition-colors"
               >
-                <td className="py-3.5 px-4 font-medium">
-                  <div className="text-white font-semibold">{test.test_name}</div>
-                  <div className="text-[10px] text-slate-500 font-mono">
+                <td className="py-3.5 px-4">
+                  <div className="font-medium text-ink">{test.test_name}</div>
+                  <div className="text-[10px] text-ink-muted font-mono">
                     {test.category}
                   </div>
                 </td>
 
                 <td className="py-3.5 px-4">
-                  <span className="font-bold text-white text-sm">
+                  <span className="font-semibold text-ink text-sm tabular-nums">
                     {test.value}
                   </span>{" "}
-                  <span className="text-slate-400">{test.unit}</span>
+                  <span className="text-ink-muted">{test.unit}</span>
                   {test.previous_value !== undefined && (
-                    <span className="block text-[10px] text-slate-500">
-                      Prior: {test.previous_value}
+                    <span className="block text-[11px] text-ink-muted tabular-nums">
+                      Prior: {test.previous_value} {test.unit}
                     </span>
                   )}
                 </td>
 
-                <td className="py-3.5 px-4 font-mono text-slate-400">
+                <td className="py-3.5 px-4 font-mono text-ink-muted tabular-nums">
                   {test.reference_range}
                 </td>
 
@@ -65,19 +65,19 @@ export function TestResultTable({ tests }: TestResultTableProps) {
 
                 <td className="py-3.5 px-4">
                   {test.anomaly ? (
-                    <AnomalyBadge label="Unusual shift" />
+                    <AnomalyBadge label="Shift detected" />
                   ) : (
-                    <span className="text-slate-500 text-[11px]">Normal variance</span>
+                    <span className="text-ink-muted text-xs">Expected variance</span>
                   )}
                 </td>
 
                 <td className="py-3.5 px-4 text-right">
                   <Link
                     href={`/tests/${test.slug}`}
-                    className="inline-flex items-center gap-1 text-teal-400 hover:text-teal-300 font-semibold"
+                    className="inline-flex items-center gap-1 text-brand hover:text-brand-hover font-medium"
                   >
-                    <span>View Chart</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <span>View chart</span>
+                    <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                   </Link>
                 </td>
               </tr>

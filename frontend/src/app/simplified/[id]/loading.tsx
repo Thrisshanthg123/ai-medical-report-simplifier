@@ -7,7 +7,7 @@ export default function SimplifiedReportLoading() {
       role="status"
       aria-busy="true"
       aria-live="polite"
-      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn"
+      className="max-w-container mx-auto px-4 sm:px-6 py-8 space-y-8"
     >
       <span className="sr-only">Loading plain-language simplified medical report...</span>
 
@@ -18,22 +18,22 @@ export default function SimplifiedReportLoading() {
           <Skeleton className="h-4 w-44" />
         </div>
         <div className="flex items-center gap-2">
-          <Skeleton className="h-8 w-24 rounded-lg" />
-          <Skeleton className="h-8 w-44 rounded-lg" />
+          <Skeleton className="h-9 w-24 rounded-control" />
+          <Skeleton className="h-9 w-44 rounded-control" />
         </div>
       </div>
 
       {/* Main Document Container Skeleton */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-6 sm:p-10 space-y-8 shadow-xl">
+      <div className="rounded-panel border border-border bg-surface p-6 sm:p-10 space-y-8">
         {/* Document Header Skeleton */}
-        <div className="border-b border-slate-800 pb-6">
+        <div className="border-b border-border pb-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Skeleton className="h-4 w-40 rounded-full" />
-                <Skeleton className="h-4 w-28 rounded" />
+                <Skeleton className="h-4 w-40 rounded-chip" />
+                <Skeleton className="h-4 w-28 rounded-chip" />
               </div>
-              <Skeleton className="h-8 w-72 sm:w-96 rounded-lg" />
+              <Skeleton className="h-8 w-72 sm:w-96 rounded-control" />
             </div>
 
             <div className="space-y-1.5 text-left sm:text-right">
@@ -45,9 +45,9 @@ export default function SimplifiedReportLoading() {
         </div>
 
         {/* Section 1: Executive Overview Skeleton */}
-        <div className="rounded-xl bg-slate-950/70 border border-slate-800 p-5 space-y-3">
+        <div className="rounded-panel bg-surface-subtle border border-border p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <Skeleton className="w-4 h-4 rounded" />
+            <Skeleton className="w-4 h-4 rounded-chip" />
             <Skeleton className="h-4 w-48" />
           </div>
           <SkeletonText lines={2} />
@@ -55,7 +55,7 @@ export default function SimplifiedReportLoading() {
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="p-3 rounded-lg bg-slate-900 border border-slate-800 text-center space-y-1.5"
+                className="p-3 rounded-control bg-surface border border-border text-center space-y-1.5"
               >
                 <Skeleton className="h-7 w-12 mx-auto" />
                 <Skeleton className="h-3 w-32 mx-auto" />
@@ -66,9 +66,9 @@ export default function SimplifiedReportLoading() {
 
         {/* Section 2: Important Findings Skeleton */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between pb-1 border-b border-slate-800/80">
+          <div className="flex items-center justify-between pb-1 border-b border-border">
             <div className="flex items-center gap-2">
-              <Skeleton className="w-7 h-7 rounded-lg" />
+              <Skeleton className="w-7 h-7 rounded-control" />
               <div className="space-y-1">
                 <Skeleton className="h-4 w-36" />
                 <Skeleton className="h-3 w-64" />
@@ -81,12 +81,12 @@ export default function SimplifiedReportLoading() {
             {Array.from({ length: 2 }).map((_, i) => (
               <div
                 key={i}
-                className="p-4 rounded-xl bg-slate-950/70 border border-slate-800/90 space-y-3"
+                className="p-4 rounded-control bg-surface-subtle border border-border space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Skeleton className="h-5 w-36" />
-                    <Skeleton className="h-4 w-20 rounded" />
+                    <Skeleton className="h-4 w-20 rounded-chip" />
                   </div>
                   <div className="flex items-center gap-2">
                     <SkeletonBadge className="w-24" />
@@ -94,7 +94,7 @@ export default function SimplifiedReportLoading() {
                   </div>
                 </div>
                 <SkeletonText lines={2} />
-                <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between">
+                <div className="pt-2 border-t border-border flex items-center justify-between">
                   <Skeleton className="h-3 w-40" />
                   <Skeleton className="h-4 w-28" />
                 </div>
@@ -105,9 +105,9 @@ export default function SimplifiedReportLoading() {
 
         {/* Section 3: Medical Terms Explained Skeleton */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between pb-1 border-b border-slate-800/80">
+          <div className="flex items-center justify-between pb-1 border-b border-border">
             <div className="flex items-center gap-2">
-              <Skeleton className="w-7 h-7 rounded-lg" />
+              <Skeleton className="w-7 h-7 rounded-control" />
               <div className="space-y-1">
                 <Skeleton className="h-4 w-44" />
                 <Skeleton className="h-3 w-56" />
@@ -117,15 +117,15 @@ export default function SimplifiedReportLoading() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Skeleton className="h-9 flex-1 rounded-lg" />
-            <Skeleton className="h-9 w-24 rounded-lg" />
+            <Skeleton className="h-10 flex-1 rounded-control" />
+            <Skeleton className="h-10 w-24 rounded-control" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="p-4 rounded-xl bg-slate-950/40 border border-slate-800 space-y-2"
+                className="p-4 rounded-control bg-surface-subtle border border-border space-y-2"
               >
                 <div className="flex items-center justify-between">
                   <Skeleton className="h-4 w-32" />
@@ -148,7 +148,7 @@ export default function SimplifiedReportLoading() {
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="p-4 rounded-xl bg-slate-950/40 border border-slate-800 space-y-3"
+                className="p-4 rounded-control bg-surface-subtle border border-border space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <Skeleton className="h-5 w-40" />
@@ -169,9 +169,9 @@ export default function SimplifiedReportLoading() {
 
         {/* Section 5: Clear Next Actions Skeleton */}
         <div className="space-y-4 pt-2">
-          <div className="flex items-center justify-between pb-1 border-b border-slate-800/80">
+          <div className="flex items-center justify-between pb-1 border-b border-border">
             <div className="flex items-center gap-2">
-              <Skeleton className="w-7 h-7 rounded-lg" />
+              <Skeleton className="w-7 h-7 rounded-control" />
               <div className="space-y-1">
                 <Skeleton className="h-4 w-56" />
                 <Skeleton className="h-3 w-64" />
@@ -180,12 +180,12 @@ export default function SimplifiedReportLoading() {
             <SkeletonBadge className="w-24" />
           </div>
 
-          <div className="p-5 rounded-xl border border-teal-500/20 bg-slate-900/60 space-y-3">
+          <div className="p-5 rounded-panel border border-border bg-surface-subtle space-y-3">
             <Skeleton className="h-5 w-64" />
             <SkeletonText lines={3} />
             <div className="flex gap-2 pt-2">
-              <Skeleton className="h-8 w-32 rounded-lg" />
-              <Skeleton className="h-8 w-32 rounded-lg" />
+              <Skeleton className="h-9 w-32 rounded-control" />
+              <Skeleton className="h-9 w-32 rounded-control" />
             </div>
           </div>
         </div>

@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
-import { UploadDropzone, SelectedMedicalFile } from "@/components/upload/UploadDropzone";
+import { ArrowLeft } from "lucide-react";
+import {
+  UploadDropzone,
+  SelectedMedicalFile,
+} from "@/components/upload/UploadDropzone";
 import { ProcessingPipeline } from "@/components/upload/ProcessingPipeline";
-import { DisclaimerNotice } from "@/components/ui/DisclaimerNotice";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export default function UploadPage() {
@@ -31,81 +33,91 @@ export default function UploadPage() {
 
   return (
     <ProtectedRoute>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Top Breadcrumb / Navigation */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+      <div className="bg-canvas text-ink py-8 sm:py-10">
+        <div className="max-w-container mx-auto px-4 sm:px-6 space-y-8">
+          {/* Top Navigation Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-ink-muted">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 text-ink-muted hover:text-ink transition-colors min-h-target sm:min-h-0 items-center"
+            >
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+              <span>Back to Dashboard</span>
+            </Link>
+
+            <p className="text-xs text-ink-muted">
+              [TEAM: confirm privacy statement]
+            </p>
+          </div>
+
+          {/* Page Header */}
+          <div className="space-y-2">
+            <h1 className="font-serif font-semibold text-2xl sm:text-3xl text-ink tracking-tight">
+              Upload your medical report
+            </h1>
+            <p className="text-sm text-ink-muted max-w-2xl leading-relaxed">
+              Upload a lab or medical report. H2 simplifies the results, shows
+              reference ranges, and identifies trends over time.
+            </p>
+          </div>
+
+          {/* Upload Zone or Processing Pipeline */}
+          {!isProcessing ? (
+            <UploadDropzone
+              selectedFile={file}
+              onFileSelect={handleFileSelect}
+              onFileRemove={handleFileRemove}
+              onStartAnalysis={handleStartAnalysis}
+              isProcessing={isProcessing}
+            />
+          ) : (
+            <ProcessingPipeline
+              fileName={file ? file.name : "report.pdf"}
+              file={file?.rawFile}
+            />
+          )}
+
+          {/* Process Explanation Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <div className="p-5 rounded-panel border border-border bg-surface space-y-1.5">
+              <span className="text-xs font-semibold text-brand">01</span>
+              <h2 className="font-semibold text-sm text-ink">Reads your report</h2>
+              <p className="text-xs text-ink-muted leading-relaxed">
+                Reads test names, measured values, units, and reference ranges
+                directly from your document.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-panel border border-border bg-surface space-y-1.5">
+              <span className="text-xs font-semibold text-brand">02</span>
+              <h2 className="font-semibold text-sm text-ink">Compares over time</h2>
+              <p className="text-xs text-ink-muted leading-relaxed">
+                Compares new values against your past records when previous
+                reports are available.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-panel border border-border bg-surface space-y-1.5">
+              <span className="text-xs font-semibold text-brand">03</span>
+              <h2 className="font-semibold text-sm text-ink">Explains in plain language</h2>
+              <p className="text-xs text-ink-muted leading-relaxed">
+                Explains results simply so you know what questions to consider
+                asking your doctor.
+              </p>
+            </div>
+          </div>
+
+          {/* Short Clinical Disclaimer */}
+          <aside
+            aria-label="Clinical Disclaimer"
+            className="p-4 rounded-panel bg-surface-subtle border border-border text-xs text-ink-muted leading-relaxed"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Dashboard</span>
-          </Link>
-
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
-            <span>Files are processed securely and not stored externally</span>
-          </div>
+            <strong className="text-ink font-semibold">Important notice:</strong>{" "}
+            H2 is an informational tool for understanding medical reports and is
+            not a substitute for professional medical advice, diagnosis, or
+            treatment. Always consult a qualified healthcare provider.
+          </aside>
         </div>
-
-        {/* Header */}
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-teal-400">
-              Document Ingestion &amp; Analysis
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            Upload Medical Report
-          </h1>
-          <p className="text-sm text-slate-400 mt-1.5 max-w-2xl leading-relaxed">
-            Upload any blood test, metabolic panel, or clinical lab report in PDF or image format.
-            H2 extracts values, validates reference bounds, and runs ML historical trend detection.
-          </p>
-        </div>
-
-        {/* Upload Zone or Processing Pipeline */}
-        {!isProcessing ? (
-          <UploadDropzone
-            selectedFile={file}
-            onFileSelect={handleFileSelect}
-            onFileRemove={handleFileRemove}
-            onStartAnalysis={handleStartAnalysis}
-            isProcessing={isProcessing}
-          />
-        ) : (
-          <ProcessingPipeline
-            fileName={file ? file.name : "report.pdf"}
-            file={file?.rawFile}
-          />
-        )}
-
-        {/* Feature explanation cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-          <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 text-xs space-y-1.5">
-            <h4 className="font-semibold text-slate-200">1. Instant Parsing</h4>
-            <p className="text-slate-400 leading-relaxed">
-              Extracts test names, numeric values, units, and clinical reference intervals automatically.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 text-xs space-y-1.5">
-            <h4 className="font-semibold text-slate-200">2. Trend Detection</h4>
-            <p className="text-slate-400 leading-relaxed">
-              Correlates newly uploaded values against previously stored records to flag trajectory shifts.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 text-xs space-y-1.5">
-            <h4 className="font-semibold text-slate-200">3. Plain English</h4>
-            <p className="text-slate-400 leading-relaxed">
-              Translates complex lab parameters into clear, neutral summaries without diagnostic speculation.
-            </p>
-          </div>
-        </div>
-
-        {/* Responsible AI Disclaimer */}
-        <DisclaimerNotice />
       </div>
     </ProtectedRoute>
   );

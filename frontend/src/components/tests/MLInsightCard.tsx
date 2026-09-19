@@ -1,5 +1,5 @@
 import React from "react";
-import { Cpu, TrendingUp, TrendingDown, Minus, Sparkles, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { MLAnalysis } from "@/types/medical";
 import { TrendBadge } from "@/components/ui/TrendBadge";
 import { AnomalyBadge } from "@/components/ui/AnomalyBadge";
@@ -11,29 +11,21 @@ interface MLInsightCardProps {
 
 export function MLInsightCard({ analysis, testName }: MLInsightCardProps) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900 via-slate-900/95 to-slate-950 p-6 space-y-6 shadow-xl relative overflow-hidden">
-      {/* Decorative accent */}
-      <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />
-
+    <div className="rounded-panel border border-border bg-surface p-5 space-y-5">
       {/* Header distinguishing AI Extraction vs Custom ML */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-indigo-950/80 border border-indigo-800/60 flex items-center justify-center text-indigo-300">
-            <Cpu className="w-5 h-5" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-semibold text-ink">
+              Historical trend analysis
+            </h3>
+            <span className="text-[10px] uppercase font-mono tracking-wider bg-surface-subtle text-ink-muted px-2 py-0.5 rounded-panel border border-border">
+              ML model
+            </span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-white">
-                Historical Trend Analysis
-              </h3>
-              <span className="text-[10px] uppercase font-mono tracking-wider bg-indigo-950/90 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800/60">
-                Custom ML Model
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">
-              Evaluator Note: AI extracts the PDF document; our ML algorithm models the multi-report trajectory.
-            </p>
-          </div>
+          <p className="text-xs text-ink-muted mt-1">
+            Trajectory and statistical pattern modeled across previous laboratory reports.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -45,61 +37,60 @@ export function MLInsightCard({ analysis, testName }: MLInsightCardProps) {
 
       {/* Metric Breakdown Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800">
-          <span className="text-[11px] text-slate-400 block mb-1">
-            Trajectory Direction
+        <div className="p-3 rounded-panel bg-surface-subtle border border-border">
+          <span className="text-[11px] text-ink-muted block mb-1">
+            Trajectory direction
           </span>
           <TrendBadge trend={analysis.trend_direction} />
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800">
-          <span className="text-[11px] text-slate-400 block mb-1">
-            Net Change Observed
+        <div className="p-3 rounded-panel bg-surface-subtle border border-border">
+          <span className="text-[11px] text-ink-muted block mb-1">
+            Net change observed
           </span>
-          <span className="text-sm font-bold text-white font-mono">
+          <span className="text-sm font-semibold text-ink font-mono tabular-nums">
             {analysis.change_label}
           </span>
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800">
-          <span className="text-[11px] text-slate-400 block mb-1">
-            Statistical Anomaly
+        <div className="p-3 rounded-panel bg-surface-subtle border border-border">
+          <span className="text-[11px] text-ink-muted block mb-1">
+            Statistical check
           </span>
           <span
             className={`text-xs font-semibold ${
               analysis.anomaly_detected
-                ? "text-amber-300"
-                : "text-emerald-300"
+                ? "text-status-warning-text"
+                : "text-status-success-text"
             }`}
           >
-            {analysis.anomaly_detected ? "Shift Detected" : "Within Variance"}
+            {analysis.anomaly_detected ? "Shift detected" : "Within expected range"}
           </span>
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800">
-          <span className="text-[11px] text-slate-400 block mb-1">
-            Reports Analyzed
+        <div className="p-3 rounded-panel bg-surface-subtle border border-border">
+          <span className="text-[11px] text-ink-muted block mb-1">
+            Reports analyzed
           </span>
-          <span className="text-sm font-bold text-white font-mono">
-            {analysis.historical_points_analyzed} Quarters
+          <span className="text-sm font-semibold text-ink font-mono tabular-nums">
+            {analysis.historical_points_analyzed} {analysis.historical_points_analyzed === 1 ? "report" : "reports"}
           </span>
         </div>
       </div>
 
       {/* Plain Language Natural Explanation */}
-      <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-2">
-        <span className="text-[11px] uppercase font-semibold text-indigo-300 tracking-wider flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Patient-Friendly Explanation:</span>
+      <div className="p-4 rounded-panel bg-surface-subtle border border-border space-y-1.5">
+        <span className="text-[11px] uppercase font-semibold text-ink-muted tracking-wider block">
+          Summary:
         </span>
-        <p className="text-sm text-slate-200 leading-relaxed">
+        <p className="text-sm text-ink leading-relaxed">
           &ldquo;{analysis.explanation}&rdquo;
         </p>
       </div>
 
       {/* Non-Diagnostic Reminder */}
-      <div className="flex items-center gap-2 text-[11px] text-slate-500 pt-1">
-        <ShieldCheck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+      <div className="flex items-start gap-2 text-[11px] text-ink-muted pt-1">
+        <ShieldCheck className="w-3.5 h-3.5 text-ink-muted shrink-0 mt-0.5" />
         <span>
           Non-diagnostic analytical insight: Tracks quantitative trajectory across your personal history without assessing underlying medical conditions.
         </span>

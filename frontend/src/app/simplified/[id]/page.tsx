@@ -37,8 +37,10 @@ export default async function SimplifiedReportPage({
 
   return (
     <ProtectedRoute>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <SimplifiedReportView report={report} />
+      <div className="bg-canvas text-ink py-6 sm:py-10 print:py-0 print:bg-transparent">
+        <div className="max-w-container mx-auto px-4 sm:px-6 print:px-0 print:max-w-none">
+          <SimplifiedReportView report={report} />
+        </div>
       </div>
     </ProtectedRoute>
   );

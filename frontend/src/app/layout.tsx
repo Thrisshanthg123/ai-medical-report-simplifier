@@ -1,13 +1,28 @@
 import type { Metadata } from "next";
+import { Source_Serif_4, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navigation/Navbar";
 import { Footer } from "@/components/navigation/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["600"],
+  variable: "--font-source-serif",
+  display: "swap",
+});
+
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-source-sans",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "H2 — AI Medical Report Simplifier",
   description:
-    "Understand your medical reports. Clearly. Upload medical reports and turn complex test results into simple, visual insights.",
+    "A clear, plain-language patient tool for understanding laboratory and medical reports. Not a substitute for professional medical advice.",
 };
 
 export default function RootLayout({
@@ -16,11 +31,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="light h-full">
-      <body className="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-teal-500/20 selection:text-teal-800">
+    <html
+      lang="en"
+      className={`${sourceSerif.variable} ${sourceSans.variable} h-full`}
+    >
+      <body className="bg-canvas text-ink min-h-screen flex flex-col antialiased selection:bg-brand-tint selection:text-brand">
         <AuthProvider>
+          <a href="#main-content" className="skip-link">
+            Skip to main content
+          </a>
           <Navbar />
-          <main className="flex-1 w-full">{children}</main>
+          <main
+            id="main-content"
+            tabIndex={-1}
+            className="flex-1 w-full outline-none"
+          >
+            {children}
+          </main>
           <Footer />
         </AuthProvider>
       </body>

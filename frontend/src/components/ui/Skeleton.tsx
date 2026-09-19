@@ -13,11 +13,10 @@ export function Skeleton({
   return (
     <div
       className={cn(
-        "rounded-md motion-reduce:animate-none",
-        variant === "default" && "animate-pulse bg-slate-800/70",
-        variant === "shimmer" &&
-          "animate-pulse bg-gradient-to-r from-slate-800/40 via-slate-700/40 to-slate-800/40",
-        variant === "subtle" && "animate-pulse bg-slate-800/40",
+        "rounded-control motion-reduce:animate-none",
+        variant === "default" && "animate-pulse bg-surface-muted",
+        variant === "shimmer" && "animate-pulse bg-surface-muted",
+        variant === "subtle" && "animate-pulse bg-surface-subtle",
         className
       )}
       aria-hidden="true"
@@ -27,7 +26,7 @@ export function Skeleton({
 }
 
 export function SkeletonBadge({ className }: { className?: string }) {
-  return <Skeleton className={cn("h-5 w-16 rounded-full", className)} />;
+  return <Skeleton className={cn("h-5 w-16 rounded-chip", className)} />;
 }
 
 export function SkeletonText({
@@ -43,7 +42,7 @@ export function SkeletonText({
         <Skeleton
           key={i}
           className={cn(
-            "h-3.5 rounded",
+            "h-3.5 rounded-control",
             i === lines - 1 && lines > 1 ? "w-3/4" : "w-full",
             className
           )}
@@ -63,7 +62,7 @@ export function SkeletonCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 space-y-4",
+        "rounded-panel border border-border bg-surface p-6 space-y-4",
         className
       )}
       aria-hidden="true"
@@ -75,9 +74,9 @@ export function SkeletonCard({
             <SkeletonBadge />
           </div>
           <SkeletonText lines={2} />
-          <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between">
+          <div className="pt-2 border-t border-border flex items-center justify-between">
             <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-6 w-16 rounded" />
+            <Skeleton className="h-6 w-16 rounded-control" />
           </div>
         </>
       )}

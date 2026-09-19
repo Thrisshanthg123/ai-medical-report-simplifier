@@ -39,30 +39,32 @@ export default async function ReportDetailPage({ params }: ReportPageProps) {
 
   return (
     <ProtectedRoute>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Report Header Metadata */}
-        <ReportHeader report={report} />
+      <div className="bg-canvas text-ink py-6 sm:py-10">
+        <div className="max-w-container mx-auto px-4 sm:px-6 space-y-8">
+          {/* Report Header Metadata */}
+          <ReportHeader report={report} />
 
-        {/* AI & ML Executive Summary Banner */}
-        <ReportSummaryBanner summary={report.summary} />
+          {/* AI & ML Executive Summary Banner */}
+          <ReportSummaryBanner summary={report.summary} />
 
-        {/* Section Title */}
-        <div className="flex items-center justify-between pt-2">
-          <div>
-            <h2 className="text-xl font-bold text-white tracking-tight">
-              Extracted Test Results
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Individual biomarkers parsed from document and compared with reference intervals
-            </p>
+          {/* Section Title */}
+          <div className="flex items-center justify-between pt-2">
+            <div>
+              <h2 className="text-xl font-serif font-semibold text-ink tracking-tight">
+                Extracted Test Results
+              </h2>
+              <p className="text-xs text-ink-muted mt-0.5">
+                Individual tests parsed from document and compared with reference intervals
+              </p>
+            </div>
           </div>
+
+          {/* Interactive View: Cards or Table */}
+          <ReportViewToggle tests={report.tests} />
+
+          {/* Responsible AI Disclaimer */}
+          <DisclaimerNotice />
         </div>
-
-        {/* Interactive View: Cards or Table */}
-        <ReportViewToggle tests={report.tests} />
-
-        {/* Responsible AI Disclaimer */}
-        <DisclaimerNotice />
       </div>
     </ProtectedRoute>
   );
