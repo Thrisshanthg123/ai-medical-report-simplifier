@@ -1,0 +1,38 @@
+# API Contracts
+# TokenCap Constitution Engine
+
+CONST-API-001: /api/analysis public response structure must remain backward compatible.
+  severity:   HIGH
+  confidence: 0.72
+  source:     nextjs
+  derivedFrom: frontend/src/app/api/analysis/route.ts
+
+CONST-API-002: /api/history public response structure must remain backward compatible.
+  severity:   HIGH
+  confidence: 0.72
+  source:     nextjs
+  derivedFrom: frontend/src/app/api/history/route.ts
+
+CONST-API-003: /api/reports public response structure must remain backward compatible.
+  severity:   HIGH
+  confidence: 0.72
+  source:     nextjs
+  derivedFrom: frontend/src/app/api/reports/route.ts
+
+CONST-API-004: GET /health public response structure must remain backward compatible.
+  severity:   HIGH
+  confidence: 0.76
+  source:     fastapi
+  derivedFrom: ml/app/main.py
+
+CONST-API-005: POST /analyze public response structure must remain backward compatible.
+  severity:   HIGH
+  confidence: 0.76
+  source:     fastapi
+  derivedFrom: ml/app/main.py
+
+CONST-API-006: POST /analyze/batch public response structure must remain backward compatible.
+  severity:   HIGH
+  confidence: 0.76
+  source:     fastapi
+  derivedFrom: ml/app/main.py

@@ -1,0 +1,10 @@
+{
+  "config": [
+    ".kilo/worktrees/ginger-myrtle/frontend/**",
+    "frontend/**"
+  ],
+  "frontend": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/app/**",
+    "frontend/src/app/**"
+  ]
+}
