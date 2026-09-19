@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AI extraction using Gemini.
  *
  * Sends the uploaded file bytes to Gemini with a structured prompt asking
@@ -69,7 +69,7 @@ export async function extractMedicalReport(
   const base64Data = fileBuffer.toString("base64");
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.5-flash",
     contents: [
       {
         parts: [
