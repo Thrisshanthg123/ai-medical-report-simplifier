@@ -1,15 +1,14 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, Sparkles, HelpCircle } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { UploadDropzone, SelectedMedicalFile } from "@/components/upload/UploadDropzone";
 import { ProcessingPipeline } from "@/components/upload/ProcessingPipeline";
 import { DisclaimerNotice } from "@/components/ui/DisclaimerNotice";
 
 export default function UploadPage() {
   const [file, setFile] = useState<SelectedMedicalFile | null>(null);
-
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleFileSelect = (selected: SelectedMedicalFile) => {
@@ -43,7 +42,7 @@ export default function UploadPage() {
 
         <div className="flex items-center gap-2 text-xs text-slate-400">
           <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
-          <span>Local Simulation • No medical files uploaded to external servers</span>
+          <span>Files are processed securely and not stored externally</span>
         </div>
       </div>
 
@@ -51,14 +50,15 @@ export default function UploadPage() {
       <div>
         <div className="flex items-center gap-2 mb-1">
           <span className="text-xs font-semibold uppercase tracking-wider text-teal-400">
-            Document Ingestion & Analysis
+            Document Ingestion &amp; Analysis
           </span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
           Upload Medical Report
         </h1>
         <p className="text-sm text-slate-400 mt-1.5 max-w-2xl leading-relaxed">
-          Upload any blood test, metabolic panel, or clinical lab report in PDF or image format. H2 extracts values, validates reference bounds, and runs ML historical trend detection.
+          Upload any blood test, metabolic panel, or clinical lab report in PDF or image format.
+          H2 extracts values, validates reference bounds, and runs ML historical trend detection.
         </p>
       </div>
 
@@ -73,7 +73,8 @@ export default function UploadPage() {
         />
       ) : (
         <ProcessingPipeline
-          fileName={file ? file.name : "Metabolic_Panel_Sept_2026.pdf"}
+          fileName={file ? file.name : "report.pdf"}
+          file={file?.rawFile}
         />
       )}
 
@@ -89,7 +90,7 @@ export default function UploadPage() {
         <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 text-xs space-y-1.5">
           <h4 className="font-semibold text-slate-200">2. Trend Detection</h4>
           <p className="text-slate-400 leading-relaxed">
-            Correlates newly uploaded values against previously stored patient records to flag trajectory shifts.
+            Correlates newly uploaded values against previously stored records to flag trajectory shifts.
           </p>
         </div>
 

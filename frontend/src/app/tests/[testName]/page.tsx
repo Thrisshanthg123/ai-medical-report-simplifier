@@ -11,8 +11,7 @@ import {
   Sparkles,
   GitCompare,
 } from "lucide-react";
-import { getTestHistory, getReport } from "@/lib/api";
-import { MOCK_TESTS_LATEST } from "@/lib/mock-data";
+import { getTestHistory } from "@/lib/api";
 import { HistoricalTrendChart } from "@/components/tests/HistoricalTrendChart";
 import { MLInsightCard } from "@/components/tests/MLInsightCard";
 import { HistoricalTable } from "@/components/tests/HistoricalTable";
@@ -29,7 +28,7 @@ interface TestPageProps {
 }
 
 export async function generateStaticParams() {
-  return MOCK_TESTS_LATEST.map((t) => ({ testName: t.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: TestPageProps) {
@@ -57,16 +56,16 @@ export default async function TestDetailPage({ params }: TestPageProps) {
       {/* Top Navigation Row */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
-          href="/reports/rep-001"
+          href="/dashboard"
           className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to September Report</span>
+          <span>Back to Dashboard</span>
         </Link>
 
         <div className="flex items-center gap-2">
           <Link
-            href={`/compare?base=rep-002&compare=rep-001`}
+            href="/compare"
             className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
           >
             <GitCompare className="w-3.5 h-3.5" />
@@ -78,7 +77,7 @@ export default async function TestDetailPage({ params }: TestPageProps) {
       {/* Biomarker Selector Bar */}
       <TestSelectorNav
         currentSlug={test.slug}
-        allTests={MOCK_TESTS_LATEST}
+        allTests={[test]}
       />
 
       {/* Header and Live Stats Card */}

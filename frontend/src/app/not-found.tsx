@@ -21,9 +21,9 @@ export default function NotFound() {
               <span>Back to Dashboard</span>
             </Button>
           </Link>
-          <Link href="/reports/rep-001">
+          <Link href="/history">
             <Button variant="secondary" size="md">
-              <span>View Demo Report</span>
+              <span>View All Reports</span>
             </Button>
           </Link>
         </div>

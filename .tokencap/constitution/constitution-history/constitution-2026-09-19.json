@@ -1,0 +1,364 @@
+{
+  "version": "1.2",
+  "generatedAt": "2026-09-19T11:18:01.210Z",
+  "rules": [
+    {
+      "id": "CONST-API-001",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "nextjs",
+      "description": "/api/analysis public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /api/analysis."
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/analysis/route.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-002",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "nextjs",
+      "description": "/api/history public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /api/history."
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/history/route.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-003",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "nextjs",
+      "description": "/api/reports public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /api/reports."
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/reports/route.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-004",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "nextjs",
+      "description": "/api/reports/upload public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /api/reports/upload."
+      ],
+      "derivedFrom": [
+        "frontend/src/app/api/reports/upload/route.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-005",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "nextjs",
+      "description": "/api/reports/[id] public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /api/reports/[id]."
+      ],
+      "derivedFrom": [
+        "frontend/src/app/api/reports/[id]/route.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-006",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "nextjs",
+      "description": "/api/tests/[slug]/history public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /api/tests/[slug]/history."
+      ],
+      "derivedFrom": [
+        "frontend/src/app/api/tests/[slug]/history/route.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-007",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.76,
+      "source": "fastapi",
+      "description": "GET /health public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /health."
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/ml/app/main.py"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-008",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.76,
+      "source": "fastapi",
+      "description": "POST /analyze public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /analyze."
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/ml/app/main.py"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-009",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.76,
+      "source": "fastapi",
+      "description": "POST /analyze/batch public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /analyze/batch."
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/ml/app/main.py"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-ARCH-001",
+      "category": "Architecture",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "heuristic",
+      "description": "Services cannot import UI components.",
+      "reason": "Importing UI components into services couples server-side logic to browser rendering. This breaks SSR, testability, and separation of concerns.",
+      "whatBreaks": "Server-side services gain browser-only dependencies. Unit tests for services fail. SSR breaks.",
+      "examples": [
+        "Respect the layer boundary described."
+      ],
+      "derivedFrom": [],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-ARCH-002",
+      "category": "Architecture",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "heuristic",
+      "description": "Controllers cannot access the database directly.",
+      "reason": "Direct DB access in controllers bypasses the service layer. This breaks the layered architecture and makes logic untestable.",
+      "whatBreaks": "Business logic leaks into controllers. Database coupling makes refactoring expensive.",
+      "examples": [
+        "Respect the layer boundary described."
+      ],
+      "derivedFrom": [],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-ARCH-003",
+      "category": "Architecture",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "heuristic",
+      "description": "Route handlers cannot access the database directly.",
+      "reason": "Routes should delegate to services/controllers, not query the database themselves.",
+      "whatBreaks": "Business logic scattered across route files. Impossible to test in isolation.",
+      "examples": [
+        "Respect the layer boundary described."
+      ],
+      "derivedFrom": [],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-ARCH-004",
+      "category": "Architecture",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "heuristic",
+      "description": "UI components cannot import server-only modules.",
+      "reason": "Server-only modules may contain secrets or Node.js-only APIs that crash in the browser.",
+      "whatBreaks": "Build errors in browser environments. Potential secret exposure.",
+      "examples": [
+        "Respect the layer boundary described."
+      ],
+      "derivedFrom": [],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-ARCH-005",
+      "category": "Architecture",
+      "severity": "HIGH",
+      "confidence": 0.8,
+      "source": "heuristic",
+      "description": "High-impact clusters (Config, Other, Database) must not gain new circular dependencies.",
+      "reason": "High-impact clusters already coordinate many modules. Adding circular imports makes builds fragile.",
+      "whatBreaks": "Module resolution fails. Build tools (webpack, esbuild) may hang or produce incorrect output.",
+      "examples": [
+        "Use dependency injection or an event bus to break cycles."
+      ],
+      "derivedFrom": [],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-SEC-001",
+      "category": "Security",
+      "severity": "CRITICAL",
+      "confidence": 0.9,
+      "source": "heuristic",
+      "description": "Environment secrets must never be hardcoded in source files.",
+      "reason": "Secrets committed to source are exposed via version control history and repository access.",
+      "whatBreaks": "Security breach. API keys, database credentials, and tokens compromised.",
+      "examples": [
+        "Found in: .kilo/worktrees/ginger-myrtle/frontend/src/lib/supabase.ts, frontend/src/lib/ai.ts"
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/lib/supabase.ts",
+        "frontend/src/lib/ai.ts",
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/ml.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-SEC-002",
+      "category": "Security",
+      "severity": "CRITICAL",
+      "confidence": 0.99,
+      "source": "heuristic",
+      "description": "Environment variable files (.env) must never be committed to version control.",
+      "reason": ".env files contain secrets. Committing them exposes credentials to all repository users.",
+      "whatBreaks": "All secrets in .env become public. Immediate security incident.",
+      "examples": [
+        "Ensure .env is in .gitignore.",
+        "Use a secrets manager for production."
+      ],
+      "derivedFrom": [
+        ".env",
+        ".env.example"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-COMP-001",
+      "category": "Compliance",
+      "severity": "CRITICAL",
+      "confidence": 0.9,
+      "source": "heuristic",
+      "description": "Payment processing (PCI-DSS) — all Stripe/payment code requires compliance review.",
+      "reason": "PCI-DSS requires that all payment card data handling meets security standards. Any change to payment flows must be reviewed.",
+      "whatBreaks": "PCI compliance violation. Payment processor account suspension. Legal liability.",
+      "examples": [
+        "Always review PCI-related code before merging.",
+        "Found in: .kilo/worktrees/ginger-myrtle/frontend/src/components/simplified/ClearNextActions.tsx, .tokencap/constitution/compliance-rules.md"
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/components/simplified/ClearNextActions.tsx",
+        ".tokencap/constitution/compliance-rules.md",
+        ".tokencap/constitution/constitution.md",
+        ".tokencap/constitution/constitution.yaml"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-COMP-002",
+      "category": "Compliance",
+      "severity": "CRITICAL",
+      "confidence": 0.75,
+      "source": "heuristic",
+      "description": "HIPAA compliance — protected health information (PHI) handling must remain compliant.",
+      "reason": "HIPAA requires strict access control, audit logging, and encryption for all PHI. Removing protections is illegal.",
+      "whatBreaks": "HIPAA violation. Criminal liability. Patient data exposed.",
+      "examples": [
+        "Always review HIPAA-related code before merging.",
+        "Found in: .kilo/worktrees/ginger-myrtle/frontend/src/app/not-found.tsx, .kilo/worktrees/ginger-myrtle/frontend/src/app/page.tsx"
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/not-found.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/page.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/reports/[id]/loading.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/reports/[id]/page.tsx"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-COMP-003",
+      "category": "Compliance",
+      "severity": "CRITICAL",
+      "confidence": 0.85,
+      "source": "heuristic",
+      "description": "Audit logging must always be written and never removed.",
+      "reason": "Audit logs provide the immutable record required for compliance, forensic investigation, and regulatory review.",
+      "whatBreaks": "Compliance audit failures. Inability to investigate security incidents. Regulatory violations.",
+      "examples": [
+        "Always review AUDIT-related code before merging.",
+        "Found in: .tokencap/constitution/compliance-rules.md, .tokencap/constitution/constitution.md"
+      ],
+      "derivedFrom": [
+        ".tokencap/constitution/compliance-rules.md",
+        ".tokencap/constitution/constitution.md",
+        ".tokencap/constitution/constitution.yaml",
+        ".tokencap/snapshot.md"
+      ],
+      "relationships": [],
+      "manual": false
+    }
+  ],
+  "score": {
+    "total": 94,
+    "architecture": 100,
+    "apiStability": 100,
+    "schemaIntegrity": 90,
+    "security": 85,
+    "compliance": 100
+  },
+  "filesWritten": []
+}

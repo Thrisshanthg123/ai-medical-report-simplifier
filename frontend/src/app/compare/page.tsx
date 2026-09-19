@@ -21,8 +21,8 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   const reports = await getReports();
   const resolvedParams = searchParams ? await searchParams : {};
 
-  const initialBase = resolvedParams.base || "rep-002";
-  const initialCompare = resolvedParams.compare || "rep-001";
+  const initialBase = resolvedParams.base || reports[1]?.id || reports[0]?.id || "";
+  const initialCompare = resolvedParams.compare || reports[0]?.id || "";
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
