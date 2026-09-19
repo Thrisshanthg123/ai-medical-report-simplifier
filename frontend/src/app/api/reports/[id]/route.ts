@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getReportById } from "@/lib/supabase";
+import { getAuthenticatedUser } from "@/lib/auth-server";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await getAuthenticatedUser(request);
+    if (!auth) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized: Please log in." },
+        { status: 401 }
+      );
+    }
+
     const { id } = await context.params;
 
     if (!id) {
@@ -24,7 +33,7 @@ export async function GET(
       );
     }
 
-    const report = await getReportById(id);
+    const report = await getReportById(id, auth.user.id, auth.supabaseClient);
 
     if (!report) {
       return NextResponse.json(

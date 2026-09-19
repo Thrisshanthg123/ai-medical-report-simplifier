@@ -1,9 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getReports } from "@/lib/supabase";
+import { getAuthenticatedUser } from "@/lib/auth-server";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const reports = await getReports();
+    const auth = await getAuthenticatedUser(request);
+    if (!auth) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized: Please log in." },
+        { status: 401 }
+      );
+    }
+
+    const reports = await getReports(auth.user.id, auth.supabaseClient);
 
     return NextResponse.json({
       success: true,
@@ -21,5 +30,3 @@ export async function GET() {
     );
   }
 }
-
-

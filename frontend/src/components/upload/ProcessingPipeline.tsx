@@ -8,6 +8,7 @@ import {
   FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { uploadMedicalReport } from "@/lib/api";
 
 interface StepItem {
   id: number;
@@ -88,35 +89,14 @@ export function ProcessingPipeline({
         // Step 1: Reading report (immediate)
         setCurrentStep(1);
 
-        const formData = new FormData();
-        formData.append("file", file);
-
         // Step 2: AI Extraction starts
         await new Promise((r) => setTimeout(r, 400));
         setCurrentStep(2);
 
-        const response = await fetch("/api/reports/upload", {
-          method: "POST",
-          body: formData,
-        });
+        const data = await uploadMedicalReport(file);
 
-        // Step 3: Historical ML (show while processing response)
+        // Step 3: Historical ML
         setCurrentStep(3);
-
-        let data: any = null;
-        try {
-          const text = await response.text();
-          data = text ? JSON.parse(text) : null;
-        } catch {
-          data = null;
-        }
-
-        if (!response.ok || !data?.success) {
-          throw new Error(
-            data?.error ??
-              `Upload processing failed with status ${response.status}. Please check server logs or configure GEMINI_API_KEY.`
-          );
-        }
 
         // Step 4: Saving to database
         setCurrentStep(4);

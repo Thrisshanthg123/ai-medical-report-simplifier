@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ML HTTP client for the Python FastAPI service (ml/).
  *
  * Provides:
@@ -80,7 +80,9 @@ export async function fetchMLAnalysis(
       return null;
     }
 
-    return (await res.json()) as MLFindingsResponse;
+    const text = await res.text();
+    if (!text || !text.trim()) return null;
+    return JSON.parse(text) as MLFindingsResponse;
   } catch (error) {
     console.error("Failed to connect to ML service at " + ML_API_URL, error);
     return null;
@@ -179,7 +181,7 @@ export interface MLInput {
   unit: string;
   reference_min?: number | null;
   reference_max?: number | null;
-  history: HistoricalValue[];
+  values: number[];
 }
 
 export async function batchAnalyzeTests(
@@ -189,19 +191,27 @@ export async function batchAnalyzeTests(
 
   if (inputs.length === 0) return result;
 
-  // Filter to tests with at least 2 historical data points
-  const eligible = inputs.filter((inp) => inp.history.length >= 2);
+  // Filter to tests with at least 2 data points (historical + current)
+  const eligible = inputs.filter((inp) => inp.values.length >= 2);
   if (eligible.length === 0) return result;
 
-  const payload: MLTestInput[] = eligible.map((inp) => ({
-    test_name: inp.test_name,
-    values: inp.history.map((h) => h.value),
-    unit: inp.unit || undefined,
-    reference_range:
-      inp.reference_min !== null && inp.reference_min !== undefined
-        ? { min: inp.reference_min, max: inp.reference_max ?? undefined }
+  const payload: MLTestInput[] = eligible.map((inp) => {
+    const hasRef =
+      (inp.reference_min !== null && inp.reference_min !== undefined) ||
+      (inp.reference_max !== null && inp.reference_max !== undefined);
+
+    return {
+      test_name: inp.test_name,
+      values: inp.values,
+      unit: inp.unit || undefined,
+      reference_range: hasRef
+        ? {
+            min: inp.reference_min ?? undefined,
+            max: inp.reference_max ?? undefined,
+          }
         : undefined,
-  }));
+    };
+  });
 
   try {
     const res = await fetch(`${ML_API_URL}/analyze/batch`, {
@@ -216,7 +226,9 @@ export async function batchAnalyzeTests(
       return result;
     }
 
-    const findings: MLFindingsResponse[] = await res.json();
+    const text = await res.text();
+    if (!text || !text.trim()) return result;
+    const findings: MLFindingsResponse[] = JSON.parse(text);
     for (const f of findings) {
       result.set(f.test_name, mapMLFindings(f));
     }

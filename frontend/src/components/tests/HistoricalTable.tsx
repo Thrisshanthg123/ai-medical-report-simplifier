@@ -46,13 +46,17 @@ export function HistoricalTable({ history, unit }: HistoricalTableProps) {
               const isWithin =
                 item.value >= item.reference_min && item.value <= item.reference_max;
 
+              const year = !isNaN(new Date(item.date).getTime())
+                ? new Date(item.date).getFullYear()
+                : "";
+
               return (
                 <tr
-                  key={item.date}
+                  key={`${item.report_id || "hist"}-${item.date}-${index}`}
                   className="hover:bg-surface-subtle transition-colors"
                 >
                   <td className="py-3.5 px-4 font-medium text-ink">
-                    {item.month_label}
+                    {item.month_label} {year}
                   </td>
 
                   <td className="py-3.5 px-4 font-mono text-ink-muted tabular-nums">

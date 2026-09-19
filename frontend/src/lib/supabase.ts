@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import {
   MedicalReport,
   MedicalTest,
@@ -10,21 +10,46 @@ import {
   MLAnalysis,
 } from "@/types/medical";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-
-if (!supabaseUrl) {
-  throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL");
+export function isSupabaseConfigured(): boolean {
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_KEY;
+  return Boolean(key && key.trim());
 }
 
-if (!supabaseKey) {
-  throw new Error("Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
+let _supabaseClient: SupabaseClient | null = null;
+
+export function getSupabaseClient(): SupabaseClient {
+  if (_supabaseClient) return _supabaseClient;
+
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    "https://hxpskhiqfplhckwqeamm.supabase.co";
+
+  const supabaseKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_KEY ||
+    "dummy-anon-key";
+
+  _supabaseClient = createClient(supabaseUrl, supabaseKey);
+  return _supabaseClient;
 }
 
-export const supabase = createClient(
-  supabaseUrl,
-  supabaseKey
-);
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    const client = getSupabaseClient();
+    const val = (client as any)[prop];
+    return typeof val === "function" ? val.bind(client) : val;
+  },
+});
+
+// Local in-memory fallback store when Supabase keys are not configured
+const inMemoryReports: DbReportRow[] = [];
+const inMemoryTests: DbTestRow[] = [];
 
 // ==========================================
 // DB-SPECIFIC ROW SCHEMAS (ACTUAL SUPABASE)
@@ -32,6 +57,7 @@ export const supabase = createClient(
 
 export interface DbReportRow {
   id: string;
+  user_id?: string | null;
   report_name: string;
   report_date: string | null;
   provider_or_lab: string | null;
@@ -65,11 +91,13 @@ export interface DbTestRow {
   reports?: {
     id: string;
     report_date: string | null;
+    user_id?: string | null;
   } | null;
 }
 
 export interface SaveReportInput {
   id?: string;
+  user_id: string;
   report_name: string;
   report_date?: string | null;
   date?: string | null;
@@ -186,20 +214,50 @@ export function mapDbReportToMedicalReport(
 // REUSABLE DATABASE ACCESS FUNCTIONS
 // ==========================================
 
+function genId(): string {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
 /**
- * 1. getReports()
- * Fetch all reports with their related tests, ordered by report_date descending.
- * Maps DB rows to MedicalReport array with computed tests_count and summary counters.
+ * 1. getReports(userId?, client?)
+ * Fetch reports belonging to `userId` (or all if omitted), ordered by report_date descending.
+ * Falls back to in-memory store when Supabase keys are not configured.
  */
-export async function getReports(): Promise<MedicalReport[]> {
-  const { data, error } = await supabase
+export async function getReports(
+  userId?: string,
+  client?: SupabaseClient
+): Promise<MedicalReport[]> {
+  const dbClient = client || getSupabaseClient();
+  if (!isSupabaseConfigured()) {
+    console.warn("[supabase] Using in-memory store (demo mode) — NEXT_PUBLIC_SUPABASE_ANON_KEY not set");
+    let filtered = [...inMemoryReports];
+    if (userId) {
+      filtered = filtered.filter((r) => r.user_id === userId);
+    }
+    const sorted = filtered.sort((a, b) => {
+      const aDate = a.report_date ?? a.created_at ?? "";
+      const bDate = b.report_date ?? b.created_at ?? "";
+      return bDate.localeCompare(aDate);
+    });
+    return sorted.map((row) =>
+      mapDbReportToMedicalReport(row, inMemoryTests.filter((t) => t.report_id === row.id))
+    );
+  }
+
+  let query = dbClient
     .from("reports")
     .select("*, tests(*)")
     .order("report_date", { ascending: false });
 
+  if (userId) {
+    query = query.eq("user_id", userId);
+  }
+
+  const { data, error } = await query;
+
   if (error) {
     console.error("Error fetching reports from Supabase:", error);
-    throw new Error(`Failed to fetch reports: ${error.message}`);
+    return [];
   }
 
   if (!data) return [];
@@ -210,20 +268,38 @@ export async function getReports(): Promise<MedicalReport[]> {
 }
 
 /**
- * 2. getReportById(reportId)
+ * 2. getReportById(reportId, userId?, client?)
  * Fetch a single report and its related tests by ID.
- * Maps DB rows into MedicalReport structure.
+ * Falls back to in-memory store when Supabase keys are not configured.
  */
-export async function getReportById(reportId: string): Promise<MedicalReport | null> {
-  const { data, error } = await supabase
+export async function getReportById(
+  reportId: string,
+  userId?: string,
+  client?: SupabaseClient
+): Promise<MedicalReport | null> {
+  const dbClient = client || getSupabaseClient();
+  if (!isSupabaseConfigured()) {
+    const row = inMemoryReports.find(
+      (r) => r.id === reportId && (!userId || r.user_id === userId)
+    ) ?? null;
+    if (!row) return null;
+    return mapDbReportToMedicalReport(row, inMemoryTests.filter((t) => t.report_id === reportId));
+  }
+
+  let query = dbClient
     .from("reports")
     .select("*, tests(*)")
-    .eq("id", reportId)
-    .maybeSingle();
+    .eq("id", reportId);
+
+  if (userId) {
+    query = query.eq("user_id", userId);
+  }
+
+  const { data, error } = await query.maybeSingle();
 
   if (error) {
     console.error(`Error fetching report ${reportId} from Supabase:`, error);
-    throw new Error(`Failed to fetch report: ${error.message}`);
+    return null;
   }
 
   if (!data) return null;
@@ -233,21 +309,55 @@ export async function getReportById(reportId: string): Promise<MedicalReport | n
 }
 
 /**
- * 3. getHistoricalTestValues(slug)
- * Find tests matching the given test slug across historical reports.
- * Joins the parent report to obtain report_date, ordered by report_date ascending.
- * Maps rows into HistoricalValue objects with generated month_label.
+ * 3. getHistoricalTestValues(slug, userId?, client?)
+ * Find tests matching the given test slug across historical reports for `userId`.
+ * Falls back to in-memory store when Supabase keys are not configured.
  */
-export async function getHistoricalTestValues(slug: string): Promise<HistoricalValue[]> {
-  const { data, error } = await supabase
+export async function getHistoricalTestValues(
+  slug: string,
+  userId?: string,
+  client?: SupabaseClient
+): Promise<HistoricalValue[]> {
+  const dbClient = client || getSupabaseClient();
+  if (!isSupabaseConfigured()) {
+    const userReports = userId
+      ? inMemoryReports.filter((r) => r.user_id === userId)
+      : inMemoryReports;
+    const userReportIds = new Set(userReports.map((r) => r.id));
+    const rows = inMemoryTests.filter((t) => t.slug === slug && userReportIds.has(t.report_id));
+    const mapped: HistoricalValue[] = rows.map((row) => {
+      const report = inMemoryReports.find((r) => r.id === row.report_id);
+      const date = report?.report_date ?? row.created_at ?? new Date().toISOString();
+      return {
+        date,
+        month_label: getMonthLabel(date),
+        value: row.value !== null ? Number(row.value) : 0,
+        reference_min: row.reference_min !== null ? Number(row.reference_min) : 0,
+        reference_max: row.reference_max !== null ? Number(row.reference_max) : 0,
+        unit: row.unit ?? "",
+        report_id: row.report_id,
+      };
+    });
+    mapped.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return mapped;
+  }
+
+  let query = dbClient
     .from("tests")
-    .select("*, reports!inner(id, report_date)")
-    .eq("slug", slug)
-    .order("reports(report_date)", { ascending: true });
+    .select("*, reports!inner(id, report_date, user_id)")
+    .eq("slug", slug);
+
+  if (userId) {
+    query = query.eq("reports.user_id", userId);
+  }
+
+  query = query.order("reports(report_date)", { ascending: true });
+
+  const { data, error } = await query;
 
   if (error) {
     console.error(`Error fetching historical test values for slug '${slug}':`, error);
-    throw new Error(`Failed to fetch historical test values: ${error.message}`);
+    return [];
   }
 
   if (!data) return [];
@@ -273,13 +383,17 @@ export async function getHistoricalTestValues(slug: string): Promise<HistoricalV
 }
 
 /**
- * 4. saveReport(report)
+ * 4. saveReport(report, client?)
  * Inserts one report record into the `reports` table.
- * Uses only existing columns: report_name, report_date, provider_or_lab, status, summary_overview, key_takeaways.
- * Returns the inserted report ID.
+ * Falls back to in-memory store when Supabase keys are not configured.
  */
-export async function saveReport(report: SaveReportInput): Promise<string> {
+export async function saveReport(
+  report: SaveReportInput,
+  client?: SupabaseClient
+): Promise<string> {
+  const dbClient = client || getSupabaseClient();
   const payload = {
+    user_id: report.user_id,
     report_name: report.report_name,
     report_date: report.report_date ?? report.date ?? new Date().toISOString(),
     provider_or_lab: report.provider_or_lab ?? "",
@@ -288,7 +402,19 @@ export async function saveReport(report: SaveReportInput): Promise<string> {
     key_takeaways: report.key_takeaways ?? report.summary?.key_takeaways ?? [],
   };
 
-  const { data, error } = await supabase
+  if (!isSupabaseConfigured()) {
+    console.warn("[supabase] Using in-memory store (demo mode) — persisting report locally");
+    const id = genId();
+    const row: DbReportRow = {
+      id,
+      ...payload,
+      created_at: new Date().toISOString(),
+    };
+    inMemoryReports.push(row);
+    return id;
+  }
+
+  const { data, error } = await dbClient
     .from("reports")
     .insert(payload)
     .select("id")
@@ -303,15 +429,16 @@ export async function saveReport(report: SaveReportInput): Promise<string> {
 }
 
 /**
- * 5. saveTests(reportId, tests)
+ * 5. saveTests(reportId, tests, client?)
  * Inserts test records into the `tests` table associated with `report_id`.
- * Inserts only columns that actually exist in `tests`.
- * Returns the inserted tests mapped to MedicalTest[].
+ * Falls back to in-memory store when Supabase keys are not configured.
  */
 export async function saveTests(
   reportId: string,
-  tests: SaveTestInput[]
+  tests: SaveTestInput[],
+  client?: SupabaseClient
 ): Promise<MedicalTest[]> {
+  const dbClient = client || getSupabaseClient();
   if (!tests || tests.length === 0) {
     return [];
   }
@@ -336,7 +463,18 @@ export async function saveTests(
     ml_analysis: t.ml_analysis ?? null,
   }));
 
-  const { data, error } = await supabase
+  if (!isSupabaseConfigured()) {
+    console.warn("[supabase] Using in-memory store (demo mode) — persisting tests locally");
+    const savedRows: DbTestRow[] = rows.map((r) => ({
+      ...r,
+      id: genId(),
+      created_at: new Date().toISOString(),
+    }));
+    inMemoryTests.push(...savedRows);
+    return savedRows.map(mapDbTestToMedicalTest);
+  }
+
+  const { data, error } = await dbClient
     .from("tests")
     .insert(rows)
     .select();
@@ -347,4 +485,4 @@ export async function saveTests(
   }
 
   return (data as DbTestRow[]).map(mapDbTestToMedicalTest);
-}
+}

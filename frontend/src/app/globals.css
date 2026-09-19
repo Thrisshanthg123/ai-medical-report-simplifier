@@ -83,6 +83,22 @@ h1, h2, h3, h4, .font-serif {
   outline-offset: 2px;
 }
 
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF9F7;
+}
+::-webkit-scrollbar-thumb {
+  background: #CFCAC1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5B6572;
+}
+
 /* Numeric alignment for laboratory values */
 .tabular-nums {
   font-variant-numeric: tabular-nums;

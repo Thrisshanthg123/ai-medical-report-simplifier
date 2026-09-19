@@ -1,11 +1,11 @@
 # TokenCap Constitution Engine
-# Generated: 2026-09-19T06:10:15.576Z
+# Generated: 2026-09-19T11:18:01.210Z
 # Version: 1.2
 
 constitution:
   version: "1.2"
-  generated_at: "2026-09-19T06:10:15.576Z"
-  rule_count: 14
+  generated_at: "2026-09-19T11:18:01.210Z"
+  rule_count: 19
 
   score:
     total:            94
@@ -19,6 +19,24 @@ constitution:
     - id: "CONST-SEC-001"
       category: "Security"
       severity: "CRITICAL"
+      confidence: 0.90
+      source: "heuristic"
+      manual: false
+      description: |-
+        Environment secrets must never be hardcoded in source files.
+      reason: |-
+        Secrets committed to source are exposed via version control history and repository access.
+      what_breaks: |-
+        Security breach. API keys, database credentials, and tokens compromised.
+      derived_from:
+        - ".kilo/worktrees/ginger-myrtle/frontend/src/lib/supabase.ts"
+        - "frontend/src/lib/ai.ts"
+        - "frontend/src/lib/api.ts"
+        - "frontend/src/lib/ml.ts"
+
+    - id: "CONST-SEC-002"
+      category: "Security"
+      severity: "CRITICAL"
       confidence: 0.99
       source: "heuristic"
       manual: false
@@ -29,9 +47,28 @@ constitution:
       what_breaks: |-
         All secrets in .env become public. Immediate security incident.
       derived_from:
+        - ".env"
         - ".env.example"
 
     - id: "CONST-COMP-001"
+      category: "Compliance"
+      severity: "CRITICAL"
+      confidence: 0.90
+      source: "heuristic"
+      manual: false
+      description: |-
+        Payment processing (PCI-DSS) — all Stripe/payment code requires compliance review.
+      reason: |-
+        PCI-DSS requires that all payment card data handling meets security standards. Any change to payment flows must be reviewed.
+      what_breaks: |-
+        PCI compliance violation. Payment processor account suspension. Legal liability.
+      derived_from:
+        - ".kilo/worktrees/ginger-myrtle/frontend/src/components/simplified/ClearNextActions.tsx"
+        - ".tokencap/constitution/compliance-rules.md"
+        - ".tokencap/constitution/constitution.md"
+        - ".tokencap/constitution/constitution.yaml"
+
+    - id: "CONST-COMP-002"
       category: "Compliance"
       severity: "CRITICAL"
       confidence: 0.75
@@ -44,12 +81,12 @@ constitution:
       what_breaks: |-
         HIPAA violation. Criminal liability. Patient data exposed.
       derived_from:
-        - ".tokencap/constitution/compliance-rules.md"
-        - ".tokencap/constitution/constitution.md"
-        - ".tokencap/constitution/constitution.yaml"
-        - ".tokencap/snapshot.md"
+        - ".kilo/worktrees/ginger-myrtle/frontend/src/app/not-found.tsx"
+        - ".kilo/worktrees/ginger-myrtle/frontend/src/app/page.tsx"
+        - ".kilo/worktrees/ginger-myrtle/frontend/src/app/reports/[id]/loading.tsx"
+        - ".kilo/worktrees/ginger-myrtle/frontend/src/app/reports/[id]/page.tsx"
 
-    - id: "CONST-COMP-002"
+    - id: "CONST-COMP-003"
       category: "Compliance"
       severity: "CRITICAL"
       confidence: 0.85
@@ -80,7 +117,7 @@ constitution:
       what_breaks: |-
         External integrations, mobile apps, or SDKs break if response shape changes.
       derived_from:
-        - "frontend/src/app/api/analysis/route.ts"
+        - ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/analysis/route.ts"
 
     - id: "CONST-API-002"
       category: "API"
@@ -95,7 +132,7 @@ constitution:
       what_breaks: |-
         External integrations, mobile apps, or SDKs break if response shape changes.
       derived_from:
-        - "frontend/src/app/api/history/route.ts"
+        - ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/history/route.ts"
 
     - id: "CONST-API-003"
       category: "API"
@@ -110,9 +147,54 @@ constitution:
       what_breaks: |-
         External integrations, mobile apps, or SDKs break if response shape changes.
       derived_from:
-        - "frontend/src/app/api/reports/route.ts"
+        - ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/reports/route.ts"
 
     - id: "CONST-API-004"
+      category: "API"
+      severity: "HIGH"
+      confidence: 0.72
+      source: "nextjs"
+      manual: false
+      description: |-
+        /api/reports/upload public response structure must remain backward compatible.
+      reason: |-
+        Public API endpoints form the contract between this service and its consumers.
+      what_breaks: |-
+        External integrations, mobile apps, or SDKs break if response shape changes.
+      derived_from:
+        - "frontend/src/app/api/reports/upload/route.ts"
+
+    - id: "CONST-API-005"
+      category: "API"
+      severity: "HIGH"
+      confidence: 0.72
+      source: "nextjs"
+      manual: false
+      description: |-
+        /api/reports/[id] public response structure must remain backward compatible.
+      reason: |-
+        Public API endpoints form the contract between this service and its consumers.
+      what_breaks: |-
+        External integrations, mobile apps, or SDKs break if response shape changes.
+      derived_from:
+        - "frontend/src/app/api/reports/[id]/route.ts"
+
+    - id: "CONST-API-006"
+      category: "API"
+      severity: "HIGH"
+      confidence: 0.72
+      source: "nextjs"
+      manual: false
+      description: |-
+        /api/tests/[slug]/history public response structure must remain backward compatible.
+      reason: |-
+        Public API endpoints form the contract between this service and its consumers.
+      what_breaks: |-
+        External integrations, mobile apps, or SDKs break if response shape changes.
+      derived_from:
+        - "frontend/src/app/api/tests/[slug]/history/route.ts"
+
+    - id: "CONST-API-007"
       category: "API"
       severity: "HIGH"
       confidence: 0.76
@@ -125,9 +207,9 @@ constitution:
       what_breaks: |-
         External integrations, mobile apps, or SDKs break if response shape changes.
       derived_from:
-        - "ml/app/main.py"
+        - ".kilo/worktrees/ginger-myrtle/ml/app/main.py"
 
-    - id: "CONST-API-005"
+    - id: "CONST-API-008"
       category: "API"
       severity: "HIGH"
       confidence: 0.76
@@ -140,9 +222,9 @@ constitution:
       what_breaks: |-
         External integrations, mobile apps, or SDKs break if response shape changes.
       derived_from:
-        - "ml/app/main.py"
+        - ".kilo/worktrees/ginger-myrtle/ml/app/main.py"
 
-    - id: "CONST-API-006"
+    - id: "CONST-API-009"
       category: "API"
       severity: "HIGH"
       confidence: 0.76
@@ -155,7 +237,7 @@ constitution:
       what_breaks: |-
         External integrations, mobile apps, or SDKs break if response shape changes.
       derived_from:
-        - "ml/app/main.py"
+        - ".kilo/worktrees/ginger-myrtle/ml/app/main.py"
 
     - id: "CONST-ARCH-001"
       category: "Architecture"
