@@ -1,4 +1,4 @@
-import {
+﻿import {
   MedicalReport,
   MedicalTest,
   HistoricalValue,
@@ -133,4 +133,3 @@ export async function compareReports(
     comparisons,
   };
 }
-

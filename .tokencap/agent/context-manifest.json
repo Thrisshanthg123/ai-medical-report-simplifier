@@ -1,0 +1,58 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-09-19T06:10:15.427Z",
+  "entry": "START_HERE.md",
+  "project": {
+    "name": "ai-medical-report-simplifier",
+    "type": "Unknown",
+    "architectureStyle": "Modular"
+  },
+  "clusters": [
+    "config",
+    "frontend"
+  ],
+  "criticalFiles": [
+    ".kilo/worktrees/ginger-myrtle/frontend/eslint.config.mjs",
+    ".kilo/worktrees/ginger-myrtle/frontend/next.config.ts",
+    ".kilo/worktrees/ginger-myrtle/frontend/postcss.config.mjs",
+    "frontend/eslint.config.mjs",
+    "frontend/next.config.ts",
+    "frontend/postcss.config.mjs"
+  ],
+  "riskAreas": [],
+  "reviewGroups": [
+    {
+      "name": "API Review Group",
+      "fileCount": 3
+    }
+  ],
+  "allowedContext": {
+    "config": [
+      ".kilo/worktrees/ginger-myrtle/frontend/**",
+      "frontend/**"
+    ],
+    "frontend": [
+      ".kilo/worktrees/ginger-myrtle/frontend/src/app/**",
+      "frontend/src/app/**"
+    ]
+  },
+  "recommendedReads": {},
+  "files": {
+    "entry": "START_HERE.md",
+    "intelligence": "agent-pack.md",
+    "allowedContext": "allowed-context.json",
+    "modelInstructions": "model-instructions.md",
+    "architecture": "architecture.md",
+    "rules": "rules.md",
+    "reviewRules": "review-rules.md",
+    "riskMap": "risk-map.md",
+    "techStack": "tech-stack.md",
+    "skills": "skills.md",
+    "machineReadable": "agent.json"
+  },
+  "meta": {
+    "tokencapVersion": "1.0.0",
+    "description": "Self-Loading Universal Context Layer - machine-readable repository intelligence index.",
+    "usage": "Read entry file first, then use allowedContext and recommendedReads for navigation."
+  }
+}

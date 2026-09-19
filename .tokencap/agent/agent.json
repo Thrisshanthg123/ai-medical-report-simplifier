@@ -1,0 +1,116 @@
+{
+  "version": "0.8",
+  "projectName": "ai-medical-report-simplifier",
+  "generatedAt": "2026-09-19T06:10:15.425Z",
+  "projectType": "Unknown",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "databases": [],
+    "auth": [],
+    "testing": [],
+    "buildTools": [],
+    "cloudSdks": [],
+    "payments": [],
+    "externalServices": []
+  },
+  "architecture": {
+    "style": "Modular",
+    "layers": [
+      "Modular"
+    ],
+    "clusters": [
+      {
+        "name": "Config",
+        "size": 6,
+        "risk": "LOW",
+        "centralFile": "eslint.config.mjs"
+      },
+      {
+        "name": "Frontend",
+        "size": 4,
+        "risk": "LOW",
+        "centralFile": "layout.tsx"
+      },
+      {
+        "name": "Utilities",
+        "size": 4,
+        "risk": "LOW",
+        "centralFile": "ai.ts"
+      },
+      {
+        "name": "Unclassified",
+        "size": 3,
+        "risk": "LOW",
+        "centralFile": "api-contracts.yaml"
+      },
+      {
+        "name": "API",
+        "size": 3,
+        "risk": "HIGH",
+        "centralFile": "route.ts"
+      },
+      {
+        "name": "Database",
+        "size": 1,
+        "risk": "LOW",
+        "centralFile": "schema-invariants.yaml"
+      },
+      {
+        "name": "Dashboard",
+        "size": 1,
+        "risk": "LOW",
+        "centralFile": "medicalReport.ts"
+      }
+    ],
+    "criticalChains": [],
+    "evidence": []
+  },
+  "criticalFiles": [
+    ".kilo/worktrees/ginger-myrtle/frontend/eslint.config.mjs",
+    ".kilo/worktrees/ginger-myrtle/frontend/next.config.ts",
+    ".kilo/worktrees/ginger-myrtle/frontend/postcss.config.mjs",
+    ".tokencap/constitution/api-contracts.yaml",
+    ".tokencap/constitution/constitution.yaml",
+    ".tokencap/constitution/schema-invariants.yaml",
+    "frontend/eslint.config.mjs",
+    "frontend/next.config.ts",
+    "frontend/postcss.config.mjs"
+  ],
+  "riskAreas": [
+    {
+      "cluster": "API",
+      "level": "HIGH",
+      "files": [
+        "frontend/src/app/api/analysis/route.ts",
+        "frontend/src/app/api/history/route.ts",
+        "frontend/src/app/api/reports/route.ts"
+      ],
+      "reason": "API layer is the public contract. Breaking changes here break all consumers."
+    }
+  ],
+  "reviewGroups": [
+    {
+      "name": "API Review Group",
+      "files": [
+        "frontend/src/app/api/analysis/route.ts",
+        "frontend/src/app/api/history/route.ts",
+        "frontend/src/app/api/reports/route.ts"
+      ],
+      "reason": "Shared dependency chain (3 files). Central file: route.ts with 0 importers. Changes in this group carry HIGH risk - review all listed files together.",
+      "risk": "HIGH"
+    }
+  ],
+  "rules": [
+    "Core library code lives in lib/ - keep it framework-agnostic",
+    "App Router entry points live in app/ - follow Next.js file conventions",
+    "API route handlers live in api/ - keep them thin, delegate to services",
+    "Validation schemas live in schemas/ - use them at API boundaries",
+    "Shared TypeScript types live in types/ - import from here, not redeclared inline"
+  ],
+  "coreFeatures": [
+    "Frontend",
+    "API"
+  ],
+  "agentInjectHooks": {}
+}

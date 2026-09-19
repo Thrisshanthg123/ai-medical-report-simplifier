@@ -1,32 +1,34 @@
 ﻿/**
  * ML HTTP client for the Python FastAPI service (ml/).
  *
- * Sends historical test values to POST /analyze/batch and maps
- * MLFindingsOutput -> frontend MLAnalysis type.
+ * Provides:
+ * 1. batchAnalyzeTests: used by the upload pipeline to analyze multiple tests against historical data
+ * 2. fetchMLAnalysis: single test series analysis (used by /api/analysis)
  *
  * Handles service unavailability gracefully — reports are still usable
  * without ML analysis.
  */
 import { MLAnalysis, HistoricalValue, TrendDirection } from "@/types/medical";
 
-const ML_API_URL = process.env.ML_API_URL ?? "http://localhost:8000";
+const ML_API_URL =
+  process.env.ML_API_URL ||
+  process.env.NEXT_PUBLIC_ML_SERVICE_URL ||
+  "http://localhost:8000";
 
 // ---------------------------------------------------------------------------
-// ML service input types (matches ml/app/schemas.py)
+// Single test payload & response interfaces (for /api/analysis compatibility)
 // ---------------------------------------------------------------------------
-interface MLReferenceRangeInput {
-  min?: number | null;
-  max?: number | null;
-}
-
-interface MLTestInput {
+export interface MLAnalysisPayload {
   test_name: string;
-  values: number[];
-  reference_range?: MLReferenceRangeInput;
+  values: (number | null | string)[];
+  reference_range?: {
+    min?: number | null;
+    max?: number | null;
+  };
   unit?: string;
 }
 
-interface MLFindingsOutput {
+export interface MLFindingsResponse {
   test_name: string;
   unit?: string | null;
   current_value?: number | null;
@@ -42,7 +44,7 @@ interface MLFindingsOutput {
     percentage?: number | null;
   };
   trend: {
-    direction: string;
+    direction: "increasing" | "decreasing" | "stable" | "insufficient_data";
     slope?: number | null;
   };
   reference_range: {
@@ -59,9 +61,48 @@ interface MLFindingsOutput {
   data_points: number;
 }
 
+export async function fetchMLAnalysis(
+  payload: MLAnalysisPayload
+): Promise<MLFindingsResponse | null> {
+  try {
+    const res = await fetch(`${ML_API_URL}/analyze`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+      signal: AbortSignal.timeout(10000),
+    });
+
+    if (!res.ok) {
+      console.warn(`ML Service responded with status ${res.status}`);
+      return null;
+    }
+
+    return (await res.json()) as MLFindingsResponse;
+  } catch (error) {
+    console.error("Failed to connect to ML service at " + ML_API_URL, error);
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
+// ML service input types for batch processing
+// ---------------------------------------------------------------------------
+interface MLReferenceRangeInput {
+  min?: number | null;
+  max?: number | null;
+}
+
+interface MLTestInput {
+  test_name: string;
+  values: number[];
+  reference_range?: MLReferenceRangeInput;
+  unit?: string;
+}
+
 // Check ML service health
-// ---------------------------------------------------------------------------
 export async function checkMLHealth(): Promise<boolean> {
   try {
     const res = await fetch(`${ML_API_URL}/health`, {
@@ -73,19 +114,15 @@ export async function checkMLHealth(): Promise<boolean> {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Map ML direction string to frontend TrendDirection
-// ---------------------------------------------------------------------------
 function mapDirection(direction: string): TrendDirection {
   if (direction === "increasing") return "increasing";
   if (direction === "decreasing") return "decreasing";
   return "stable";
 }
 
-// ---------------------------------------------------------------------------
-// Map MLFindingsOutput -> frontend MLAnalysis
-// ---------------------------------------------------------------------------
-function mapMLFindings(findings: MLFindingsOutput): MLAnalysis {
+// Map MLFindingsResponse -> frontend MLAnalysis
+function mapMLFindings(findings: MLFindingsResponse): MLAnalysis {
   const direction = mapDirection(findings.trend.direction);
   const anomalyDetected = findings.anomaly.detected;
   const changeAbs = findings.change.absolute;
@@ -120,7 +157,7 @@ function mapMLFindings(findings: MLFindingsOutput): MLAnalysis {
       " A statistical deviation was detected in the most recent value relative to prior observations.";
   }
 
-  if (findings.reference_range.message) {
+  if (findings.reference_range?.message) {
     explanation += ` ${findings.reference_range.message}`;
   }
 
@@ -136,7 +173,6 @@ function mapMLFindings(findings: MLFindingsOutput): MLAnalysis {
 
 // ---------------------------------------------------------------------------
 // Batch-analyze multiple tests
-// Returns a map of test_name -> MLAnalysis (or empty map if ML unavailable)
 // ---------------------------------------------------------------------------
 export interface MLInput {
   test_name: string;
@@ -180,12 +216,11 @@ export async function batchAnalyzeTests(
       return result;
     }
 
-    const findings: MLFindingsOutput[] = await res.json();
+    const findings: MLFindingsResponse[] = await res.json();
     for (const f of findings) {
       result.set(f.test_name, mapMLFindings(f));
     }
   } catch (err) {
-    // ML service unavailable — return empty map, report still saves without analysis
     console.warn("ML service unavailable:", err instanceof Error ? err.message : err);
   }
 

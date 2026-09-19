@@ -1,0 +1,172 @@
+{
+  "version": "0.9",
+  "generatedAt": "2026-09-19T06:10:16.066Z",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "databases": [],
+    "orms": [],
+    "auth": [],
+    "testing": [],
+    "buildTools": [],
+    "cloudSdks": [],
+    "payments": [],
+    "other": [],
+    "packageManager": null,
+    "summary": "(unknown)"
+  },
+  "clusters": [
+    {
+      "name": "API",
+      "files": [
+        "frontend/src/app/api/analysis/route.ts",
+        "frontend/src/app/api/history/route.ts",
+        "frontend/src/app/api/reports/route.ts"
+      ],
+      "risk": "HIGH",
+      "centralFile": "frontend/src/app/api/analysis/route.ts",
+      "dependsOn": [],
+      "usedBy": []
+    },
+    {
+      "name": "Config",
+      "files": [
+        ".kilo/worktrees/ginger-myrtle/frontend/eslint.config.mjs",
+        ".kilo/worktrees/ginger-myrtle/frontend/next.config.ts",
+        ".kilo/worktrees/ginger-myrtle/frontend/postcss.config.mjs",
+        "frontend/eslint.config.mjs",
+        "frontend/next.config.ts",
+        "frontend/postcss.config.mjs"
+      ],
+      "risk": "LOW",
+      "centralFile": ".kilo/worktrees/ginger-myrtle/frontend/eslint.config.mjs",
+      "dependsOn": [],
+      "usedBy": []
+    },
+    {
+      "name": "Frontend",
+      "files": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/layout.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/page.tsx",
+        "frontend/src/app/layout.tsx",
+        "frontend/src/app/page.tsx"
+      ],
+      "risk": "LOW",
+      "centralFile": ".kilo/worktrees/ginger-myrtle/frontend/src/app/layout.tsx",
+      "dependsOn": [],
+      "usedBy": []
+    },
+    {
+      "name": "Other",
+      "files": [
+        ".tokencap/constitution/api-contracts.yaml",
+        ".tokencap/constitution/constitution.yaml",
+        "frontend/src/types/medical.ts"
+      ],
+      "risk": "LOW",
+      "centralFile": ".tokencap/constitution/api-contracts.yaml",
+      "dependsOn": [],
+      "usedBy": []
+    },
+    {
+      "name": "Database",
+      "files": [
+        ".tokencap/constitution/schema-invariants.yaml"
+      ],
+      "risk": "LOW",
+      "centralFile": ".tokencap/constitution/schema-invariants.yaml",
+      "dependsOn": [],
+      "usedBy": []
+    },
+    {
+      "name": "Utilities",
+      "files": [
+        "frontend/src/lib/ai.ts",
+        "frontend/src/lib/ml.ts",
+        "frontend/src/lib/supabase.ts",
+        "frontend/src/lib/validation.ts"
+      ],
+      "risk": "LOW",
+      "centralFile": "frontend/src/lib/ai.ts",
+      "dependsOn": [],
+      "usedBy": []
+    },
+    {
+      "name": "Dashboard",
+      "files": [
+        "frontend/src/schemas/medicalReport.ts"
+      ],
+      "risk": "LOW",
+      "centralFile": "frontend/src/schemas/medicalReport.ts",
+      "dependsOn": [],
+      "usedBy": []
+    }
+  ],
+  "criticalFiles": [
+    ".kilo/worktrees/ginger-myrtle/frontend/eslint.config.mjs",
+    ".kilo/worktrees/ginger-myrtle/frontend/next.config.ts",
+    ".kilo/worktrees/ginger-myrtle/frontend/postcss.config.mjs",
+    ".tokencap/constitution/api-contracts.yaml",
+    ".tokencap/constitution/constitution.yaml",
+    ".tokencap/constitution/schema-invariants.yaml",
+    "frontend/eslint.config.mjs",
+    "frontend/next.config.ts",
+    "frontend/postcss.config.mjs",
+    "frontend/src/app/api/analysis/route.ts",
+    "frontend/src/app/api/history/route.ts",
+    "frontend/src/app/api/reports/route.ts"
+  ],
+  "architecture": {
+    "style": "Modular",
+    "layers": [
+      "Modular"
+    ],
+    "criticalChains": []
+  },
+  "riskAreas": [
+    {
+      "cluster": "API",
+      "level": "HIGH",
+      "files": [
+        "frontend/src/app/api/analysis/route.ts",
+        "frontend/src/app/api/history/route.ts",
+        "frontend/src/app/api/reports/route.ts"
+      ],
+      "reason": "API layer is the public contract. Breaking changes here break all consumers."
+    }
+  ],
+  "reviewGroups": [
+    {
+      "name": "API Review Group",
+      "files": [
+        "frontend/src/app/api/analysis/route.ts",
+        "frontend/src/app/api/history/route.ts",
+        "frontend/src/app/api/reports/route.ts"
+      ],
+      "reason": "Shared dependency chain (3 files). Central file: route.ts with 0 importers. Changes in this group carry HIGH risk — review all listed files together.",
+      "risk": "HIGH"
+    }
+  ],
+  "recentChanges": {
+    "branch": "person4",
+    "filesChanged": 12,
+    "riskLevel": "HIGH",
+    "featuresAdded": [
+      "Application Logic: Training",
+      "Authentication System: .Tokencap",
+      "Documentation: AGENTS",
+      "Test Suite: Tests"
+    ],
+    "featuresModified": [
+      "Frontend Layer",
+      "Application Logic: Ml"
+    ]
+  },
+  "rules": [
+    "Core library code lives in lib/ — keep it framework-agnostic",
+    "App Router entry points live in app/ — follow Next.js file conventions",
+    "API route handlers live in api/ — keep them thin, delegate to services",
+    "Validation schemas live in schemas/ — use them at API boundaries",
+    "Shared TypeScript types live in types/ — import from here, not redeclared inline"
+  ]
+}
