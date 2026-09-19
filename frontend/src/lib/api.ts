@@ -9,6 +9,7 @@ import {
   MOCK_REPORTS,
   MOCK_TESTS_LATEST,
 } from "./mock-data";
+import { fetchMLAnalysis } from "./ml";
 
 /**
  * Mock API service simulating asynchronous server communication.
@@ -50,9 +51,39 @@ export async function getTestHistory(
   if (!test || !test.historical_values) {
     return null;
   }
+
+  const testCopy: MedicalTest = JSON.parse(JSON.stringify(test));
+  const historyCopy: HistoricalValue[] = JSON.parse(JSON.stringify(test.historical_values));
+
+  // Connect live Python ML Service (FastAPI at http://localhost:8000/analyze)
+  const historicalValues = historyCopy.map((h) => h.value);
+  const mlResult = await fetchMLAnalysis({
+    test_name: testCopy.test_name,
+    values: historicalValues,
+    reference_range: {
+      min: testCopy.reference_min,
+      max: testCopy.reference_max,
+    },
+    unit: testCopy.unit,
+  });
+
+  if (mlResult) {
+    testCopy.trend = mlResult.trend.direction as any;
+    testCopy.anomaly = mlResult.anomaly.detected;
+    (testCopy as any).ml_analysis = {
+      trend_direction: mlResult.trend.direction,
+      trend_slope: mlResult.trend.slope,
+      anomaly_detected: mlResult.anomaly.detected,
+      anomaly_score: mlResult.anomaly.score,
+      statistics: mlResult.statistics,
+      change: mlResult.change,
+      reference_message: mlResult.reference_range.message,
+    };
+  }
+
   return {
-    test: JSON.parse(JSON.stringify(test)),
-    history: JSON.parse(JSON.stringify(test.historical_values)),
+    test: testCopy,
+    history: historyCopy,
   };
 }
 
