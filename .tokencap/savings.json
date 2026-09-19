@@ -1,28 +1,36 @@
 {
   "baseline": {
-    "tokens": 72100,
-    "dollars": 0.18025
+    "tokens": 244051,
+    "dollars": 0.610127
   },
   "actual": {
-    "tokens": 46457,
-    "dollars": 0.116143
+    "tokens": 69406,
+    "dollars": 0.173515
   },
   "savings": {
-    "tokens": 25643,
-    "dollars": 0.064107,
-    "percent": 35.6
+    "tokens": 174645,
+    "dollars": 0.436612,
+    "percent": 71.6
   },
-  "generatedAt": "2026-09-19T06:10:15.033Z",
+  "generatedAt": "2026-09-19T11:17:59.911Z",
   "profile": "balanced",
   "stats": {
     "version": 2,
-    "runCount": 2,
-    "totalTokensSaved": 47884,
-    "lastBuildSavings": 25643,
-    "lastBuildAt": "2026-09-19T06:10:15.033Z",
-    "notifiedMilestones": [],
-    "newMilestones": [],
-    "notice": null,
+    "runCount": 6,
+    "totalTokensSaved": 721715,
+    "lastBuildSavings": 174645,
+    "lastBuildAt": "2026-09-19T11:17:59.911Z",
+    "notifiedMilestones": [
+      50000,
+      100000,
+      200000,
+      400000,
+      600000
+    ],
+    "newMilestones": [
+      600000
+    ],
+    "notice": "TokenCap has saved 721,715 context tokens across 6 builds.",
     "baselineDefinition": "Eligible redacted text source files before ranking, selection, or compression.",
     "tokenizerProfile": "tokencap-estimate-v1",
     "runs": [
@@ -41,6 +49,42 @@
         "baselineTokens": 72100,
         "snapshotTokens": 46457,
         "savedTokens": 25643,
+        "tokenizerProfile": "tokencap-estimate-v1",
+        "baselineDefinition": "Eligible redacted text source files before ranking, selection, or compression."
+      },
+      {
+        "generatedAt": "2026-09-19T09:23:27.286Z",
+        "profile": "balanced",
+        "baselineTokens": 219493,
+        "snapshotTokens": 63002,
+        "savedTokens": 156491,
+        "tokenizerProfile": "tokencap-estimate-v1",
+        "baselineDefinition": "Eligible redacted text source files before ranking, selection, or compression."
+      },
+      {
+        "generatedAt": "2026-09-19T09:40:46.796Z",
+        "profile": "balanced",
+        "baselineTokens": 237765,
+        "snapshotTokens": 68960,
+        "savedTokens": 168805,
+        "tokenizerProfile": "tokencap-estimate-v1",
+        "baselineDefinition": "Eligible redacted text source files before ranking, selection, or compression."
+      },
+      {
+        "generatedAt": "2026-09-19T09:59:31.977Z",
+        "profile": "balanced",
+        "baselineTokens": 242851,
+        "snapshotTokens": 68961,
+        "savedTokens": 173890,
+        "tokenizerProfile": "tokencap-estimate-v1",
+        "baselineDefinition": "Eligible redacted text source files before ranking, selection, or compression."
+      },
+      {
+        "generatedAt": "2026-09-19T11:17:59.911Z",
+        "profile": "balanced",
+        "baselineTokens": 244051,
+        "snapshotTokens": 69406,
+        "savedTokens": 174645,
         "tokenizerProfile": "tokencap-estimate-v1",
         "baselineDefinition": "Eligible redacted text source files before ranking, selection, or compression."
       }

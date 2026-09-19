@@ -1,10 +1,91 @@
 {
+  "api": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/analysis/route*",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/history/route*",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/reports/route*",
+    "frontend/src/app/api/analysis/route*",
+    "frontend/src/app/api/history/route*",
+    "frontend/src/app/api/reports/[id]/route*",
+    "frontend/src/app/api/reports/route*",
+    "frontend/src/app/api/reports/upload/route*",
+    "frontend/src/app/api/tests/[slug]/history/route*"
+  ],
+  "frontend": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/app/**",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/compare/ComparisonView*",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/history/TimelineView*",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/navigation/**",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/tests/**",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/ui/**",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/upload/**",
+    "frontend/src/app/**",
+    "frontend/src/components/compare/ComparisonView*",
+    "frontend/src/components/history/TimelineView*",
+    "frontend/src/components/navigation/**",
+    "frontend/src/components/tests/**",
+    "frontend/src/components/ui/**",
+    "frontend/src/components/upload/**"
+  ],
+  "other": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/app/**",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/types/medical*",
+    ".tokencap/constitution/**",
+    "frontend/src/app/**",
+    "frontend/src/types/medical*"
+  ],
+  "ui-badge": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/ui/**"
+  ],
+  "utilities": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/lib/**",
+    "frontend/src/lib/**"
+  ],
+  "ui-badge-2": [
+    "frontend/src/components/ui/**"
+  ],
+  "lib-validation": [
+    "frontend/src/lib/**",
+    "frontend/src/schemas/medicalReport*"
+  ],
   "config": [
     ".kilo/worktrees/ginger-myrtle/frontend/**",
     "frontend/**"
   ],
-  "frontend": [
-    ".kilo/worktrees/ginger-myrtle/frontend/src/app/**",
-    "frontend/src/app/**"
+  "diff": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/app/compare/loading*",
+    "frontend/src/app/compare/loading*"
+  ],
+  "dashboard": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/app/dashboard/**",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/dashboard/**",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/reports/**",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/tests/HistoricalTrendChart*",
+    ".kilo/worktrees/ginger-myrtle/frontend/src/schemas/medicalReport*",
+    "frontend/src/app/dashboard/**",
+    "frontend/src/components/dashboard/**",
+    "frontend/src/components/reports/**",
+    "frontend/src/components/tests/HistoricalTrendChart*"
+  ],
+  "testing": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/app/tests/[testName]/loading*",
+    "frontend/src/app/tests/[testName]/loading*"
+  ],
+  "reports-testresultcard": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/reports/**"
+  ],
+  "simplified-clearnextactions": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/components/simplified/**"
+  ],
+  "lib-mock-data": [
+    ".kilo/worktrees/ginger-myrtle/frontend/src/lib/**"
+  ],
+  "database": [
+    ".tokencap/constitution/schema-invariants*"
+  ],
+  "reports-testresultcard-2": [
+    "frontend/src/components/reports/**"
+  ],
+  "simplified-clearnextactions-2": [
+    "frontend/src/components/simplified/**"
   ]
 }

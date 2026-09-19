@@ -1,7 +1,7 @@
 {
   "version": "0.8",
   "projectName": "ai-medical-report-simplifier",
-  "generatedAt": "2026-09-19T06:10:15.425Z",
+  "generatedAt": "2026-09-19T11:18:00.518Z",
   "projectType": "Unknown",
   "techStack": {
     "languages": [],
@@ -12,7 +12,9 @@
     "buildTools": [],
     "cloudSdks": [],
     "payments": [],
-    "externalServices": []
+    "externalServices": [
+      "External API via NEXT_PUBLIC_SUPABASE_URL: https://hxpskhiqfplhckwqeamm.supabase.co"
+    ]
   },
   "architecture": {
     "style": "Modular",
@@ -21,46 +23,106 @@
     ],
     "clusters": [
       {
+        "name": "Frontend",
+        "size": 42,
+        "risk": "MEDIUM",
+        "centralFile": "page.tsx"
+      },
+      {
+        "name": "Dashboard",
+        "size": 19,
+        "risk": "LOW",
+        "centralFile": "loading.tsx"
+      },
+      {
+        "name": "Unclassified",
+        "size": 16,
+        "risk": "MEDIUM",
+        "centralFile": "error.tsx"
+      },
+      {
+        "name": "Utilities",
+        "size": 11,
+        "risk": "MEDIUM",
+        "centralFile": "ai.ts"
+      },
+      {
+        "name": "API",
+        "size": 9,
+        "risk": "HIGH",
+        "centralFile": "route.ts"
+      },
+      {
         "name": "Config",
-        "size": 6,
+        "size": 7,
         "risk": "LOW",
         "centralFile": "eslint.config.mjs"
       },
       {
-        "name": "Frontend",
+        "name": "Simplified (ClearNextActions)",
         "size": 4,
         "risk": "LOW",
-        "centralFile": "layout.tsx"
+        "centralFile": "ClearNextActions.tsx"
       },
       {
-        "name": "Utilities",
+        "name": "Ui (Badge)",
+        "size": 4,
+        "risk": "MEDIUM",
+        "centralFile": "Badge.tsx"
+      },
+      {
+        "name": "Simplified (ClearNextActions) 2",
         "size": 4,
         "risk": "LOW",
-        "centralFile": "ai.ts"
+        "centralFile": "ClearNextActions.tsx"
       },
       {
-        "name": "Unclassified",
+        "name": "Ui (Badge) 2",
+        "size": 4,
+        "risk": "MEDIUM",
+        "centralFile": "Badge.tsx"
+      },
+      {
+        "name": "Reports (TestResultCard)",
         "size": 3,
         "risk": "LOW",
-        "centralFile": "api-contracts.yaml"
+        "centralFile": "TestResultCard.tsx"
       },
       {
-        "name": "API",
+        "name": "Reports (TestResultCard) 2",
         "size": 3,
-        "risk": "HIGH",
-        "centralFile": "route.ts"
+        "risk": "LOW",
+        "centralFile": "TestResultCard.tsx"
+      },
+      {
+        "name": "Lib (validation)",
+        "size": 3,
+        "risk": "MEDIUM",
+        "centralFile": "validation.ts"
+      },
+      {
+        "name": "Diff",
+        "size": 2,
+        "risk": "LOW",
+        "centralFile": "loading.tsx"
+      },
+      {
+        "name": "Testing",
+        "size": 2,
+        "risk": "LOW",
+        "centralFile": "loading.tsx"
+      },
+      {
+        "name": "Lib (mock-data)",
+        "size": 2,
+        "risk": "LOW",
+        "centralFile": "mock-data.ts"
       },
       {
         "name": "Database",
         "size": 1,
         "risk": "LOW",
         "centralFile": "schema-invariants.yaml"
-      },
-      {
-        "name": "Dashboard",
-        "size": 1,
-        "risk": "LOW",
-        "centralFile": "medicalReport.ts"
       }
     ],
     "criticalChains": [],
@@ -75,42 +137,128 @@
     ".tokencap/constitution/schema-invariants.yaml",
     "frontend/eslint.config.mjs",
     "frontend/next.config.ts",
-    "frontend/postcss.config.mjs"
+    "frontend/postcss.config.mjs",
+    "frontend/src/app/api/analysis/route.ts"
   ],
   "riskAreas": [
     {
       "cluster": "API",
       "level": "HIGH",
       "files": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/analysis/route.ts",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/history/route.ts",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/reports/route.ts",
         "frontend/src/app/api/analysis/route.ts",
         "frontend/src/app/api/history/route.ts",
-        "frontend/src/app/api/reports/route.ts"
+        "frontend/src/app/api/reports/[id]/route.ts",
+        "frontend/src/app/api/reports/route.ts",
+        "frontend/src/app/api/reports/upload/route.ts"
       ],
       "reason": "API layer is the public contract. Breaking changes here break all consumers."
+    },
+    {
+      "cluster": "Frontend",
+      "level": "MEDIUM",
+      "files": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/compare/page.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/history/page.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/layout.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/page.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/reports/[id]/page.tsx"
+      ],
+      "reason": "Frontend contains 42 modules with elevated risk."
+    },
+    {
+      "cluster": "Ui (Badge)",
+      "level": "MEDIUM",
+      "files": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/components/ui/AnomalyBadge.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/components/ui/Badge.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/components/ui/StatusBadge.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/components/ui/TrendBadge.tsx"
+      ],
+      "reason": "Ui (Badge) contains 4 modules with elevated risk. Most-connected file: Badge.tsx (3 importers)."
+    },
+    {
+      "cluster": "Utilities",
+      "level": "MEDIUM",
+      "files": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/lib/ai.ts",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/lib/file-validation.ts",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/lib/ml.ts",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/lib/supabase.ts",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/lib/utils.ts"
+      ],
+      "reason": "Utilities contains 11 modules with elevated risk."
+    },
+    {
+      "cluster": "Unclassified: .tokencap/constitution",
+      "level": "MEDIUM",
+      "files": [
+        ".tokencap/constitution/api-contracts.yaml",
+        ".tokencap/constitution/constitution.yaml"
+      ],
+      "reason": "Unclassified: .tokencap/constitution contains 2 modules with elevated risk."
+    },
+    {
+      "cluster": "Ui (Badge) 2",
+      "level": "MEDIUM",
+      "files": [
+        "frontend/src/components/ui/AnomalyBadge.tsx",
+        "frontend/src/components/ui/Badge.tsx",
+        "frontend/src/components/ui/StatusBadge.tsx",
+        "frontend/src/components/ui/TrendBadge.tsx"
+      ],
+      "reason": "Ui (Badge) 2 contains 4 modules with elevated risk. Most-connected file: Badge.tsx (3 importers)."
+    },
+    {
+      "cluster": "Lib (validation)",
+      "level": "MEDIUM",
+      "files": [
+        "frontend/src/lib/ai.ts",
+        "frontend/src/lib/validation.ts",
+        "frontend/src/schemas/medicalReport.ts"
+      ],
+      "reason": "Lib (validation) contains 3 modules with elevated risk. Most-connected file: validation.ts (2 importers)."
     }
   ],
   "reviewGroups": [
     {
       "name": "API Review Group",
       "files": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/analysis/route.ts",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/history/route.ts",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/reports/route.ts",
         "frontend/src/app/api/analysis/route.ts",
         "frontend/src/app/api/history/route.ts",
-        "frontend/src/app/api/reports/route.ts"
+        "frontend/src/app/api/reports/[id]/route.ts",
+        "frontend/src/app/api/reports/route.ts",
+        "frontend/src/app/api/reports/upload/route.ts",
+        "frontend/src/app/api/tests/[slug]/history/route.ts"
       ],
-      "reason": "Shared dependency chain (3 files). Central file: route.ts with 0 importers. Changes in this group carry HIGH risk - review all listed files together.",
+      "reason": "Shared dependency chain (9 files). Central file: route.ts with 0 importers. Changes in this group carry HIGH risk - review all listed files together.",
       "risk": "HIGH"
     }
   ],
   "rules": [
     "Core library code lives in lib/ - keep it framework-agnostic",
+    "UI components live in components/ - keep them presentational",
     "App Router entry points live in app/ - follow Next.js file conventions",
     "API route handlers live in api/ - keep them thin, delegate to services",
     "Validation schemas live in schemas/ - use them at API boundaries",
-    "Shared TypeScript types live in types/ - import from here, not redeclared inline"
+    "Shared TypeScript types live in types/ - import from here, not redeclared inline",
+    "Tests live in tests/ - co-locate unit tests near the file under test",
+    "Write tests for all service-layer functions"
   ],
   "coreFeatures": [
     "Frontend",
-    "API"
+    "Dashboard",
+    "API",
+    "Simplified (ClearNextActions)",
+    "Ui (Badge)",
+    "Simplified (ClearNextActions) 2",
+    "Ui (Badge) 2",
+    "Reports (TestResultCard)"
   ],
   "agentInjectHooks": {}
 }
