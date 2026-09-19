@@ -26,6 +26,7 @@ export interface SelectedMedicalFile {
   type: string;
   previewUrl?: string;
   category: "pdf" | "image";
+  rawFile?: File; // The actual File object for uploading
 }
 
 interface UploadDropzoneProps {
@@ -99,6 +100,7 @@ export function UploadDropzone({
       type: file.type || (category === "pdf" ? "application/pdf" : "image/jpeg"),
       previewUrl,
       category,
+      rawFile: file,
     });
   };
 

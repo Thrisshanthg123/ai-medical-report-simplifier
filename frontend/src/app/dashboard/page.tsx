@@ -13,7 +13,7 @@ export const metadata = {
 
 export default async function DashboardPage() {
   const reports = await getReports();
-  const latestReport = await getReport("rep-001");
+  const latestReport = reports[0] ?? null;
   const tests = latestReport ? latestReport.tests : [];
 
   return (
@@ -26,7 +26,7 @@ export default async function DashboardPage() {
         reportsAnalyzed={reports.length}
         testsTracked={tests.length}
         trendsDetected={tests.filter((t) => t.trend !== "stable").length}
-        reportsThisMonth={1}
+        reportsThisMonth={reports.length > 0 ? 1 : 0}
       />
 
       {/* Two Column Grid: Recent Reports & Key ML Insights */}

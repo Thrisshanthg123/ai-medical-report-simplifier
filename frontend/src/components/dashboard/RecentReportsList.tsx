@@ -30,12 +30,17 @@ export function RecentReportsList({ reports }: RecentReportsListProps) {
       </CardHeader>
 
       <CardContent className="divide-y divide-slate-800/80 p-0 flex-1">
-        {reports.map((report) => {
-          return (
-            <div
-              key={report.id}
-              className="p-4 hover:bg-slate-800/30 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-            >
+        {reports.length === 0 ? (
+          <div className="p-8 text-center text-xs text-slate-400">
+            No medical reports available.
+          </div>
+        ) : (
+          reports.map((report) => {
+            return (
+              <div
+                key={report.id}
+                className="p-4 hover:bg-slate-800/30 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+              >
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-teal-400 shrink-0 mt-0.5">
                   <FileText className="w-4 h-4" />
@@ -72,7 +77,8 @@ export function RecentReportsList({ reports }: RecentReportsListProps) {
               </div>
             </div>
           );
-        })}
+        })
+      )}
       </CardContent>
     </Card>
   );

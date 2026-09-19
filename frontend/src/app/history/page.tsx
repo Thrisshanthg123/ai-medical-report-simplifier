@@ -24,7 +24,7 @@ export default async function HistoryPage() {
               Longitudinal Archive
             </span>
             <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400">
-              4 Recorded Panels
+              {reports.length} Recorded {reports.length === 1 ? "Panel" : "Panels"}
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">

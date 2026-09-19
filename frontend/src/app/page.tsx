@@ -20,12 +20,12 @@ export default function HomePage() {
       <section className="bg-gradient-to-r from-teal-950/40 via-slate-900/60 to-teal-950/40 border-b border-teal-900/30 py-2.5 px-4 text-center">
         <p className="text-xs text-teal-300 font-medium inline-flex items-center gap-2">
           <span className="inline-block w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-          <span>Evaluator Demo: Explore the simulated pipeline with preloaded multi-quarter longitudinal lab data.</span>
+          <span>Longitudinal Lab Tracking: Turn complex test results into clear, visual trends.</span>
           <Link
-            href="/reports/rep-001"
+            href="/dashboard"
             className="text-white underline underline-offset-4 hover:text-teal-200 ml-1 font-semibold"
           >
-            Launch Demo Report →
+            Go to Dashboard →
           </Link>
         </p>
       </section>
@@ -66,7 +66,7 @@ export default function HomePage() {
               href="/dashboard"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 hover:text-white border border-slate-700/80 font-medium text-sm transition-all"
             >
-              <span>View Demo</span>
+              <span>View Dashboard</span>
               <ArrowRight className="w-4 h-4 text-slate-400" />
             </Link>
           </div>

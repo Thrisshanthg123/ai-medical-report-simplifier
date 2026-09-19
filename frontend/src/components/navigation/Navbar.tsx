@@ -18,7 +18,6 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Upload Report", href: "/upload", icon: Upload },
-  { label: "Report Results", href: "/reports/rep-001", icon: FileText, demo: true },
   { label: "History", href: "/history", icon: History },
   { label: "Compare", href: "/compare", icon: GitCompare },
 ];
@@ -70,11 +69,6 @@ export function Navbar() {
               >
                 <Icon className={cn("w-3.5 h-3.5", isActive ? "text-teal-400" : "text-slate-400")} />
                 <span>{item.label}</span>
-                {item.demo && (
-                  <span className="text-[9px] uppercase tracking-wide bg-slate-800 text-slate-400 px-1 py-0.2 rounded font-mono">
-                    Demo
-                  </span>
-                )}
               </Link>
             );
           })}
@@ -125,11 +119,6 @@ export function Navbar() {
               >
                 <Icon className={cn("w-4 h-4", isActive ? "text-teal-400" : "text-slate-400")} />
                 <span>{item.label}</span>
-                {item.demo && (
-                  <span className="text-[10px] ml-auto uppercase tracking-wide bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded">
-                    Demo
-                  </span>
-                )}
               </Link>
             );
           })}

@@ -34,57 +34,63 @@ export function KeyInsightsList({ tests }: KeyInsightsListProps) {
       </CardHeader>
 
       <CardContent className="space-y-3.5 flex-1 flex flex-col justify-between">
-        <div className="space-y-3">
-          {insightTests.map((test) => {
-            return (
-              <div
-                key={test.slug}
-                className="p-3.5 rounded-lg bg-slate-800/40 border border-slate-800 hover:border-slate-700 transition-colors"
-              >
-                <div className="flex items-start justify-between gap-2 mb-1.5">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <Link
-                        href={`/tests/${test.slug}`}
-                        className="font-semibold text-sm text-white hover:text-teal-300 transition-colors inline-flex items-center gap-1"
-                      >
-                        <span>{test.test_name}</span>
-                        <ArrowRight className="w-3 h-3 text-slate-400" />
-                      </Link>
+        {insightTests.length === 0 ? (
+          <div className="p-8 text-center text-xs text-slate-400">
+            No longitudinal insights available yet.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {insightTests.map((test) => {
+              return (
+                <div
+                  key={test.slug}
+                  className="p-3.5 rounded-lg bg-slate-800/40 border border-slate-800 hover:border-slate-700 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/tests/${test.slug}`}
+                          className="font-semibold text-sm text-white hover:text-teal-300 transition-colors inline-flex items-center gap-1"
+                        >
+                          <span>{test.test_name}</span>
+                          <ArrowRight className="w-3 h-3 text-slate-400" />
+                        </Link>
+                      </div>
+                      <span className="text-xs text-slate-400">
+                        Current: <strong className="text-slate-200">{test.value} {test.unit}</strong>
+                        {test.previous_value && (
+                          <span className="text-slate-500 ml-1">
+                            (Prev: {test.previous_value} {test.unit})
+                          </span>
+                        )}
+                      </span>
                     </div>
-                    <span className="text-xs text-slate-400">
-                      Current: <strong className="text-slate-200">{test.value} {test.unit}</strong>
-                      {test.previous_value && (
-                        <span className="text-slate-500 ml-1">
-                          (Prev: {test.previous_value} {test.unit})
-                        </span>
-                      )}
-                    </span>
+
+                    <div className="flex flex-col items-end gap-1">
+                      <TrendBadge trend={test.trend} compact />
+                      {test.anomaly && <AnomalyBadge label="Shift detected" />}
+                    </div>
                   </div>
 
-                  <div className="flex flex-col items-end gap-1">
-                    <TrendBadge trend={test.trend} compact />
-                    {test.anomaly && <AnomalyBadge label="Shift detected" />}
-                  </div>
+                  {test.ml_analysis && (
+                    <p className="text-xs text-slate-300/90 leading-relaxed mt-2 bg-slate-900/60 p-2.5 rounded border border-slate-800/80">
+                      &ldquo;{test.ml_analysis.explanation}&rdquo;
+                    </p>
+                  )}
                 </div>
-
-                {test.ml_analysis && (
-                  <p className="text-xs text-slate-300/90 leading-relaxed mt-2 bg-slate-900/60 p-2.5 rounded border border-slate-800/80">
-                    &ldquo;{test.ml_analysis.explanation}&rdquo;
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
         <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-          <span>Analysis reflects 4 multi-quarter reports</span>
+          <span>Analysis reflects recorded reports</span>
           <Link
-            href="/tests/fasting-glucose"
+            href="/history"
             className="text-teal-400 hover:text-teal-300 font-medium inline-flex items-center gap-1"
           >
-            <span>Explore all test trends</span>
+            <span>Explore all reports</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>

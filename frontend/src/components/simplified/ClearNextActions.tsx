@@ -306,7 +306,7 @@ export function ClearNextActions({
           </div>
 
           <div className="pt-2 space-y-2 print:hidden">
-            <Link href="/compare?base=rep-002&compare=rep-001" className="block">
+            <Link href="/compare" className="block">
               <Button variant="secondary" size="sm" className="w-full flex items-center justify-center gap-1.5">
                 <GitCompare className="w-3.5 h-3.5 text-indigo-400" />
                 <span>Open Side-by-Side Comparison</span>
@@ -317,7 +317,7 @@ export function ClearNextActions({
               href="/history"
               className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-indigo-300 transition-colors w-full justify-center"
             >
-              <span>Or browse chronological 4-panel archive</span>
+              <span>Or browse chronological archive</span>
               <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
