@@ -5,60 +5,86 @@ import {
   ReportSummary,
   ReportComparisonItem,
 } from "@/types/medical";
-import {
-  MOCK_REPORTS,
-  MOCK_TESTS_LATEST,
-} from "./mock-data";
 
-/**
- * Mock API service simulating asynchronous server communication.
- * Ready to be connected to teammates' real backend/OCR/ML microservices.
- */
-
-// Simulated network latency helper
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+function getBaseUrl(): string {
+  if (typeof window !== "undefined") {
+    return "";
+  }
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+  return `http://localhost:${process.env.PORT || 3000}`;
+}
 
 export async function uploadMedicalReport(
-  file: { name: string; size: number; type: string }
+  file: File
 ): Promise<{ report_id: string; message: string; report: MedicalReport }> {
-  await delay(1200);
-  // Returns rep-001 as the processed result of the upload
-  const report = MOCK_REPORTS[0];
-  return {
-    report_id: report.id,
-    message: `Report "${file.name}" successfully processed and analyzed.`,
-    report,
-  };
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${getBaseUrl()}/api/reports/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error ?? `Upload failed: server returned status ${res.status}`);
+  }
+  return await res.json();
 }
 
 export async function getReports(): Promise<MedicalReport[]> {
-  await delay(150);
-  return [...MOCK_REPORTS];
+  try {
+    const res = await fetch(`${getBaseUrl()}/api/reports`, {
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      return [];
+    }
+    const data = await res.json();
+    return data.reports ?? [];
+  } catch (error) {
+    console.error("Failed to fetch reports:", error);
+    return [];
+  }
 }
 
 export async function getReport(id: string): Promise<MedicalReport | null> {
-  await delay(100);
-  const found = MOCK_REPORTS.find((r) => r.id === id);
-  return found ? JSON.parse(JSON.stringify(found)) : null;
+  try {
+    const res = await fetch(`${getBaseUrl()}/api/reports/${id}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      return null;
+    }
+    const data = await res.json();
+    return data.report ?? data ?? null;
+  } catch (error) {
+    console.error(`Failed to fetch report ${id}:`, error);
+    return null;
+  }
 }
 
 export async function getTestHistory(
   slug: string
 ): Promise<{ test: MedicalTest; history: HistoricalValue[] } | null> {
-  await delay(100);
-  const test = MOCK_TESTS_LATEST.find((t) => t.slug === slug);
-  if (!test || !test.historical_values) {
+  try {
+    const res = await fetch(`${getBaseUrl()}/api/tests/${slug}/history`, {
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      return null;
+    }
+    const data = await res.json();
+    return data ?? null;
+  } catch (error) {
+    console.error(`Failed to fetch test history for ${slug}:`, error);
     return null;
   }
-  return {
-    test: JSON.parse(JSON.stringify(test)),
-    history: JSON.parse(JSON.stringify(test.historical_values)),
-  };
 }
 
 export async function getAnalysis(reportId: string): Promise<ReportSummary | null> {
-  await delay(100);
-  const report = MOCK_REPORTS.find((r) => r.id === reportId);
+  const report = await getReport(reportId);
   return report ? report.summary : null;
 }
 
@@ -70,13 +96,9 @@ export async function compareReports(
   reportB: MedicalReport;
   comparisons: ReportComparisonItem[];
 } | null> {
-  await delay(150);
-  const rA = MOCK_REPORTS.find((r) => r.id === reportIdA);
-  const rB = MOCK_REPORTS.find((r) => r.id === reportIdB);
-
+  const [rA, rB] = await Promise.all([getReport(reportIdA), getReport(reportIdB)]);
   if (!rA || !rB) return null;
 
-  // Let earlier report be "previous" and later report be "current"
   const [prev, curr] =
     new Date(rA.date).getTime() < new Date(rB.date).getTime()
       ? [rA, rB]
@@ -111,3 +133,4 @@ export async function compareReports(
     comparisons,
   };
 }
+

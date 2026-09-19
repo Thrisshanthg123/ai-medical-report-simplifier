@@ -31,10 +31,10 @@ export function ReportHeader({ report }: ReportHeaderProps) {
         </Link>
 
         <div className="flex items-center gap-2">
-          <Link href={`/compare?base=rep-002&compare=${report.id}`}>
+          <Link href={`/compare?compare=${report.id}`}>
             <Button variant="secondary" size="sm">
               <GitCompare className="w-3.5 h-3.5" />
-              <span>Compare with July 2026</span>
+              <span>Compare Reports</span>
             </Button>
           </Link>
 

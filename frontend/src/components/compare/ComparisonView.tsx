@@ -26,21 +26,45 @@ interface ComparisonViewProps {
 
 export function ComparisonView({
   reports,
-  initialBaseId = "rep-002",
-  initialCompareId = "rep-001",
+  initialBaseId = "",
+  initialCompareId = "",
 }: ComparisonViewProps) {
-  const [baseId, setBaseId] = useState(initialBaseId);
-  const [compareId, setCompareId] = useState(initialCompareId);
-
-  const baseReport = useMemo(
-    () => reports.find((r) => r.id === baseId) || reports[1] || reports[0],
-    [reports, baseId]
+  const [baseId, setBaseId] = useState(
+    initialBaseId || reports[1]?.id || reports[0]?.id || ""
+  );
+  const [compareId, setCompareId] = useState(
+    initialCompareId || reports[0]?.id || ""
   );
 
-  const compareReport = useMemo(
-    () => reports.find((r) => r.id === compareId) || reports[0],
-    [reports, compareId]
-  );
+  if (!reports || reports.length === 0) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-12 text-center">
+        <GitCompare className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+        <h3 className="text-base font-semibold text-white">No Reports Available</h3>
+        <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+          No medical reports available to compare. Upload reports to evaluate biomarker shifts over time.
+        </p>
+      </div>
+    );
+  }
+
+  if (reports.length < 2) {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-12 text-center">
+        <GitCompare className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+        <h3 className="text-base font-semibold text-white">Only One Report Recorded</h3>
+        <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+          At least two medical reports are required to perform a longitudinal comparative analysis.
+        </p>
+      </div>
+    );
+  }
+
+  const baseReport =
+    reports.find((r) => r.id === baseId) || reports[1] || reports[0];
+
+  const compareReport =
+    reports.find((r) => r.id === compareId) || reports[0];
 
   // Determine which is chronologically earlier
   const [earlierReport, laterReport] = useMemo(() => {

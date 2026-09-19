@@ -48,8 +48,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/reports/rep-001" className="hover:text-teal-300 transition-colors">
-                  Sample Report (September 2026)
+                <Link href="/history" className="hover:text-teal-300 transition-colors">
+                  Report History
                 </Link>
               </li>
               <li>
@@ -77,8 +77,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/simplified/rep-001" className="hover:text-teal-300 transition-colors">
-                  Plain-Language Summary
+                <Link href="/upload" className="hover:text-teal-300 transition-colors">
+                  Upload & Analyze
                 </Link>
               </li>
             </ul>
