@@ -1,6 +1,6 @@
 {
   "version": "1.2",
-  "generatedAt": "2026-09-19T06:10:15.576Z",
+  "generatedAt": "2026-09-19T11:18:01.210Z",
   "rules": [
     {
       "id": "CONST-API-001",
@@ -15,7 +15,7 @@
         "Do not remove or rename fields from the response of /api/analysis."
       ],
       "derivedFrom": [
-        "frontend/src/app/api/analysis/route.ts"
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/analysis/route.ts"
       ],
       "relationships": [],
       "manual": false
@@ -33,7 +33,7 @@
         "Do not remove or rename fields from the response of /api/history."
       ],
       "derivedFrom": [
-        "frontend/src/app/api/history/route.ts"
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/history/route.ts"
       ],
       "relationships": [],
       "manual": false
@@ -51,13 +51,67 @@
         "Do not remove or rename fields from the response of /api/reports."
       ],
       "derivedFrom": [
-        "frontend/src/app/api/reports/route.ts"
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/api/reports/route.ts"
       ],
       "relationships": [],
       "manual": false
     },
     {
       "id": "CONST-API-004",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "nextjs",
+      "description": "/api/reports/upload public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /api/reports/upload."
+      ],
+      "derivedFrom": [
+        "frontend/src/app/api/reports/upload/route.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-005",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "nextjs",
+      "description": "/api/reports/[id] public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /api/reports/[id]."
+      ],
+      "derivedFrom": [
+        "frontend/src/app/api/reports/[id]/route.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-006",
+      "category": "API",
+      "severity": "HIGH",
+      "confidence": 0.72,
+      "source": "nextjs",
+      "description": "/api/tests/[slug]/history public response structure must remain backward compatible.",
+      "reason": "Public API endpoints form the contract between this service and its consumers.",
+      "whatBreaks": "External integrations, mobile apps, or SDKs break if response shape changes.",
+      "examples": [
+        "Do not remove or rename fields from the response of /api/tests/[slug]/history."
+      ],
+      "derivedFrom": [
+        "frontend/src/app/api/tests/[slug]/history/route.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-API-007",
       "category": "API",
       "severity": "HIGH",
       "confidence": 0.76,
@@ -69,13 +123,13 @@
         "Do not remove or rename fields from the response of /health."
       ],
       "derivedFrom": [
-        "ml/app/main.py"
+        ".kilo/worktrees/ginger-myrtle/ml/app/main.py"
       ],
       "relationships": [],
       "manual": false
     },
     {
-      "id": "CONST-API-005",
+      "id": "CONST-API-008",
       "category": "API",
       "severity": "HIGH",
       "confidence": 0.76,
@@ -87,13 +141,13 @@
         "Do not remove or rename fields from the response of /analyze."
       ],
       "derivedFrom": [
-        "ml/app/main.py"
+        ".kilo/worktrees/ginger-myrtle/ml/app/main.py"
       ],
       "relationships": [],
       "manual": false
     },
     {
-      "id": "CONST-API-006",
+      "id": "CONST-API-009",
       "category": "API",
       "severity": "HIGH",
       "confidence": 0.76,
@@ -105,7 +159,7 @@
         "Do not remove or rename fields from the response of /analyze/batch."
       ],
       "derivedFrom": [
-        "ml/app/main.py"
+        ".kilo/worktrees/ginger-myrtle/ml/app/main.py"
       ],
       "relationships": [],
       "manual": false
@@ -194,6 +248,27 @@
       "id": "CONST-SEC-001",
       "category": "Security",
       "severity": "CRITICAL",
+      "confidence": 0.9,
+      "source": "heuristic",
+      "description": "Environment secrets must never be hardcoded in source files.",
+      "reason": "Secrets committed to source are exposed via version control history and repository access.",
+      "whatBreaks": "Security breach. API keys, database credentials, and tokens compromised.",
+      "examples": [
+        "Found in: .kilo/worktrees/ginger-myrtle/frontend/src/lib/supabase.ts, frontend/src/lib/ai.ts"
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/lib/supabase.ts",
+        "frontend/src/lib/ai.ts",
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/ml.ts"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-SEC-002",
+      "category": "Security",
+      "severity": "CRITICAL",
       "confidence": 0.99,
       "source": "heuristic",
       "description": "Environment variable files (.env) must never be committed to version control.",
@@ -204,6 +279,7 @@
         "Use a secrets manager for production."
       ],
       "derivedFrom": [
+        ".env",
         ".env.example"
       ],
       "relationships": [],
@@ -213,6 +289,28 @@
       "id": "CONST-COMP-001",
       "category": "Compliance",
       "severity": "CRITICAL",
+      "confidence": 0.9,
+      "source": "heuristic",
+      "description": "Payment processing (PCI-DSS) — all Stripe/payment code requires compliance review.",
+      "reason": "PCI-DSS requires that all payment card data handling meets security standards. Any change to payment flows must be reviewed.",
+      "whatBreaks": "PCI compliance violation. Payment processor account suspension. Legal liability.",
+      "examples": [
+        "Always review PCI-related code before merging.",
+        "Found in: .kilo/worktrees/ginger-myrtle/frontend/src/components/simplified/ClearNextActions.tsx, .tokencap/constitution/compliance-rules.md"
+      ],
+      "derivedFrom": [
+        ".kilo/worktrees/ginger-myrtle/frontend/src/components/simplified/ClearNextActions.tsx",
+        ".tokencap/constitution/compliance-rules.md",
+        ".tokencap/constitution/constitution.md",
+        ".tokencap/constitution/constitution.yaml"
+      ],
+      "relationships": [],
+      "manual": false
+    },
+    {
+      "id": "CONST-COMP-002",
+      "category": "Compliance",
+      "severity": "CRITICAL",
       "confidence": 0.75,
       "source": "heuristic",
       "description": "HIPAA compliance — protected health information (PHI) handling must remain compliant.",
@@ -220,19 +318,19 @@
       "whatBreaks": "HIPAA violation. Criminal liability. Patient data exposed.",
       "examples": [
         "Always review HIPAA-related code before merging.",
-        "Found in: .tokencap/constitution/compliance-rules.md, .tokencap/constitution/constitution.md"
+        "Found in: .kilo/worktrees/ginger-myrtle/frontend/src/app/not-found.tsx, .kilo/worktrees/ginger-myrtle/frontend/src/app/page.tsx"
       ],
       "derivedFrom": [
-        ".tokencap/constitution/compliance-rules.md",
-        ".tokencap/constitution/constitution.md",
-        ".tokencap/constitution/constitution.yaml",
-        ".tokencap/snapshot.md"
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/not-found.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/page.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/reports/[id]/loading.tsx",
+        ".kilo/worktrees/ginger-myrtle/frontend/src/app/reports/[id]/page.tsx"
       ],
       "relationships": [],
       "manual": false
     },
     {
-      "id": "CONST-COMP-002",
+      "id": "CONST-COMP-003",
       "category": "Compliance",
       "severity": "CRITICAL",
       "confidence": 0.85,

@@ -18,11 +18,29 @@
 
 ---
 
-## Rules (14 total)
+## Rules (19 total)
 
-### Security (1)
+### Security (2)
 
 #### 🔴 CONST-SEC-001
+
+**Environment secrets must never be hardcoded in source files.**
+
+| Field | Value |
+|---|---|
+| Severity | `CRITICAL` |
+| Category | Security |
+| Source | heuristic |
+| Confidence | █████████░ 90% |
+| Manual | No |
+
+**Why:** Secrets committed to source are exposed via version control history and repository access.
+
+**What breaks:** Security breach. API keys, database credentials, and tokens compromised.
+
+**Derived from:** `.kilo/worktrees/ginger-myrtle/frontend/src/lib/supabase.ts`, `frontend/src/lib/ai.ts`, `frontend/src/lib/api.ts`, `frontend/src/lib/ml.ts`
+
+#### 🔴 CONST-SEC-002
 
 **Environment variable files (.env) must never be committed to version control.**
 
@@ -38,11 +56,29 @@
 
 **What breaks:** All secrets in .env become public. Immediate security incident.
 
-**Derived from:** `.env.example`
+**Derived from:** `.env`, `.env.example`
 
-### Compliance (2)
+### Compliance (3)
 
 #### 🔴 CONST-COMP-001
+
+**Payment processing (PCI-DSS) — all Stripe/payment code requires compliance review.**
+
+| Field | Value |
+|---|---|
+| Severity | `CRITICAL` |
+| Category | Compliance |
+| Source | heuristic |
+| Confidence | █████████░ 90% |
+| Manual | No |
+
+**Why:** PCI-DSS requires that all payment card data handling meets security standards. Any change to payment flows must be reviewed.
+
+**What breaks:** PCI compliance violation. Payment processor account suspension. Legal liability.
+
+**Derived from:** `.kilo/worktrees/ginger-myrtle/frontend/src/components/simplified/ClearNextActions.tsx`, `.tokencap/constitution/compliance-rules.md`, `.tokencap/constitution/constitution.md`, `.tokencap/constitution/constitution.yaml`
+
+#### 🔴 CONST-COMP-002
 
 **HIPAA compliance — protected health information (PHI) handling must remain compliant.**
 
@@ -58,9 +94,9 @@
 
 **What breaks:** HIPAA violation. Criminal liability. Patient data exposed.
 
-**Derived from:** `.tokencap/constitution/compliance-rules.md`, `.tokencap/constitution/constitution.md`, `.tokencap/constitution/constitution.yaml`, `.tokencap/snapshot.md`
+**Derived from:** `.kilo/worktrees/ginger-myrtle/frontend/src/app/not-found.tsx`, `.kilo/worktrees/ginger-myrtle/frontend/src/app/page.tsx`, `.kilo/worktrees/ginger-myrtle/frontend/src/app/reports/[id]/loading.tsx`, `.kilo/worktrees/ginger-myrtle/frontend/src/app/reports/[id]/page.tsx`
 
-#### 🔴 CONST-COMP-002
+#### 🔴 CONST-COMP-003
 
 **Audit logging must always be written and never removed.**
 
@@ -78,7 +114,7 @@
 
 **Derived from:** `.tokencap/constitution/compliance-rules.md`, `.tokencap/constitution/constitution.md`, `.tokencap/constitution/constitution.yaml`, `.tokencap/snapshot.md`
 
-### API (6)
+### API (9)
 
 #### 🟠 CONST-API-001
 
@@ -96,7 +132,7 @@
 
 **What breaks:** External integrations, mobile apps, or SDKs break if response shape changes.
 
-**Derived from:** `frontend/src/app/api/analysis/route.ts`
+**Derived from:** `.kilo/worktrees/ginger-myrtle/frontend/src/app/api/analysis/route.ts`
 
 #### 🟠 CONST-API-002
 
@@ -114,7 +150,7 @@
 
 **What breaks:** External integrations, mobile apps, or SDKs break if response shape changes.
 
-**Derived from:** `frontend/src/app/api/history/route.ts`
+**Derived from:** `.kilo/worktrees/ginger-myrtle/frontend/src/app/api/history/route.ts`
 
 #### 🟠 CONST-API-003
 
@@ -132,9 +168,63 @@
 
 **What breaks:** External integrations, mobile apps, or SDKs break if response shape changes.
 
-**Derived from:** `frontend/src/app/api/reports/route.ts`
+**Derived from:** `.kilo/worktrees/ginger-myrtle/frontend/src/app/api/reports/route.ts`
 
 #### 🟠 CONST-API-004
+
+**/api/reports/upload public response structure must remain backward compatible.**
+
+| Field | Value |
+|---|---|
+| Severity | `HIGH` |
+| Category | API |
+| Source | nextjs |
+| Confidence | ███████░░░ 72% |
+| Manual | No |
+
+**Why:** Public API endpoints form the contract between this service and its consumers.
+
+**What breaks:** External integrations, mobile apps, or SDKs break if response shape changes.
+
+**Derived from:** `frontend/src/app/api/reports/upload/route.ts`
+
+#### 🟠 CONST-API-005
+
+**/api/reports/[id] public response structure must remain backward compatible.**
+
+| Field | Value |
+|---|---|
+| Severity | `HIGH` |
+| Category | API |
+| Source | nextjs |
+| Confidence | ███████░░░ 72% |
+| Manual | No |
+
+**Why:** Public API endpoints form the contract between this service and its consumers.
+
+**What breaks:** External integrations, mobile apps, or SDKs break if response shape changes.
+
+**Derived from:** `frontend/src/app/api/reports/[id]/route.ts`
+
+#### 🟠 CONST-API-006
+
+**/api/tests/[slug]/history public response structure must remain backward compatible.**
+
+| Field | Value |
+|---|---|
+| Severity | `HIGH` |
+| Category | API |
+| Source | nextjs |
+| Confidence | ███████░░░ 72% |
+| Manual | No |
+
+**Why:** Public API endpoints form the contract between this service and its consumers.
+
+**What breaks:** External integrations, mobile apps, or SDKs break if response shape changes.
+
+**Derived from:** `frontend/src/app/api/tests/[slug]/history/route.ts`
+
+#### 🟠 CONST-API-007
 
 **GET /health public response structure must remain backward compatible.**
 
@@ -150,9 +240,9 @@
 
 **What breaks:** External integrations, mobile apps, or SDKs break if response shape changes.
 
-**Derived from:** `ml/app/main.py`
+**Derived from:** `.kilo/worktrees/ginger-myrtle/ml/app/main.py`
 
-#### 🟠 CONST-API-005
+#### 🟠 CONST-API-008
 
 **POST /analyze public response structure must remain backward compatible.**
 
@@ -168,9 +258,9 @@
 
 **What breaks:** External integrations, mobile apps, or SDKs break if response shape changes.
 
-**Derived from:** `ml/app/main.py`
+**Derived from:** `.kilo/worktrees/ginger-myrtle/ml/app/main.py`
 
-#### 🟠 CONST-API-006
+#### 🟠 CONST-API-009
 
 **POST /analyze/batch public response structure must remain backward compatible.**
 
@@ -186,7 +276,7 @@
 
 **What breaks:** External integrations, mobile apps, or SDKs break if response shape changes.
 
-**Derived from:** `ml/app/main.py`
+**Derived from:** `.kilo/worktrees/ginger-myrtle/ml/app/main.py`
 
 ### Architecture (5)
 

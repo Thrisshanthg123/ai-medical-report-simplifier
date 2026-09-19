@@ -1,4 +1,4 @@
-﻿import {
+import {
   MedicalReport,
   MedicalTest,
   HistoricalValue,
@@ -26,11 +26,19 @@ export async function uploadMedicalReport(
     method: "POST",
     body: formData,
   });
+
+  const text = await res.text();
+  let errData: any = {};
+  try {
+    errData = text ? JSON.parse(text) : {};
+  } catch {
+    errData = { error: `Server returned non-JSON response (status ${res.status}): ${text.slice(0, 100)}` };
+  }
+
   if (!res.ok) {
-    const errData = await res.json().catch(() => ({}));
     throw new Error(errData.error ?? `Upload failed: server returned status ${res.status}`);
   }
-  return await res.json();
+  return errData;
 }
 
 export async function getReports(): Promise<MedicalReport[]> {
@@ -41,7 +49,8 @@ export async function getReports(): Promise<MedicalReport[]> {
     if (!res.ok) {
       return [];
     }
-    const data = await res.json();
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : {};
     return data.reports ?? [];
   } catch (error) {
     console.error("Failed to fetch reports:", error);
@@ -57,7 +66,8 @@ export async function getReport(id: string): Promise<MedicalReport | null> {
     if (!res.ok) {
       return null;
     }
-    const data = await res.json();
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : {};
     return data.report ?? data ?? null;
   } catch (error) {
     console.error(`Failed to fetch report ${id}:`, error);
@@ -75,7 +85,8 @@ export async function getTestHistory(
     if (!res.ok) {
       return null;
     }
-    const data = await res.json();
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : {};
     return data ?? null;
   } catch (error) {
     console.error(`Failed to fetch test history for ${slug}:`, error);

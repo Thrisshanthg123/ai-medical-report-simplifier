@@ -4,7 +4,7 @@
 > Paste this entire file into ChatGPT, Claude, Gemini, Cursor, Windsurf, Cline, Roo Code, or OpenHands
 > to give the AI agent full project intelligence before it touches any code.
 
-**Generated:** 2026-09-19T06:10:15.425Z
+**Generated:** 2026-09-19T11:18:00.517Z
 **Project:** ai-medical-report-simplifier
 **Type:** Unknown
 
@@ -21,17 +21,20 @@
 Modular
 ```
 
-No end-to-end layered dependency chain was verified from the import graph; treat this repository as modular until a concrete flow is established. **Config** is the largest detected subsystem by file count. Detected subsystems: Config, Frontend, Utilities, Unclassified, API.
+No end-to-end layered dependency chain was verified from the import graph; treat this repository as modular until a concrete flow is established. **Frontend** is the largest detected subsystem by file count. Detected subsystems: Frontend, Dashboard, Unclassified, Utilities, API.
 
 ---
 
 ## 3. Project Rules
 
 - Core library code lives in lib/ - keep it framework-agnostic
+- UI components live in components/ - keep them presentational
 - App Router entry points live in app/ - follow Next.js file conventions
 - API route handlers live in api/ - keep them thin, delegate to services
 - Validation schemas live in schemas/ - use them at API boundaries
 - Shared TypeScript types live in types/ - import from here, not redeclared inline
+- Tests live in tests/ - co-locate unit tests near the file under test
+- Write tests for all service-layer functions
 
 ---
 
@@ -46,12 +49,18 @@ No end-to-end layered dependency chain was verified from the import graph; treat
 - `frontend/eslint.config.mjs`
 - `frontend/next.config.ts`
 - `frontend/postcss.config.mjs`
+- `frontend/src/app/api/analysis/route.ts`
 
 ---
 
 ## 5. High-Risk Areas
 
 - [HIGH] **API** - HIGH: API layer is the public contract. Breaking changes here break all consumers.
+- [MEDIUM] **Frontend** - MEDIUM: Frontend contains 42 modules with elevated risk.
+- [MEDIUM] **Ui (Badge)** - MEDIUM: Ui (Badge) contains 4 modules with elevated risk. Most-connected file: Badge.tsx (3 importers).
+- [MEDIUM] **Utilities** - MEDIUM: Utilities contains 11 modules with elevated risk.
+- [MEDIUM] **Unclassified: .tokencap/constitution** - MEDIUM: Unclassified: .tokencap/constitution contains 2 modules with elevated risk.
+- [MEDIUM] **Ui (Badge) 2** - MEDIUM: Ui (Badge) 2 contains 4 modules with elevated risk. Most-connected file: Badge.tsx (3 importers).
 
 ---
 
@@ -61,18 +70,29 @@ When any of these files change, review ALL files in the group together:
 
 ### [HIGH] API Review Group
 
-Shared dependency chain (3 files). Central file: route.ts with 0 importers. Changes in this group carry HIGH risk - review all listed files together.
+Shared dependency chain (9 files). Central file: route.ts with 0 importers. Changes in this group carry HIGH risk - review all listed files together.
 
+- `.kilo/worktrees/ginger-myrtle/frontend/src/app/api/analysis/route.ts`
+- `.kilo/worktrees/ginger-myrtle/frontend/src/app/api/history/route.ts`
+- `.kilo/worktrees/ginger-myrtle/frontend/src/app/api/reports/route.ts`
 - `frontend/src/app/api/analysis/route.ts`
 - `frontend/src/app/api/history/route.ts`
+- `frontend/src/app/api/reports/[id]/route.ts`
 - `frontend/src/app/api/reports/route.ts`
+- `frontend/src/app/api/reports/upload/route.ts`
 
 ---
 
 ## 7. Core Features
 
 - Frontend
+- Dashboard
 - API
+- Simplified (ClearNextActions)
+- Ui (Badge)
+- Simplified (ClearNextActions) 2
+- Ui (Badge) 2
+- Reports (TestResultCard)
 
 ---
 

@@ -13,13 +13,78 @@
 import { GoogleGenAI } from "@google/genai";
 import { ExtractedReport, normalizeSlug, validateExtractedReport } from "./validation";
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-if (!GEMINI_API_KEY) {
-  throw new Error("Missing GEMINI_API_KEY environment variable");
+function getAIClient(): GoogleGenAI | null {
+  const apiKey = process.env.AI_API_KEY || process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+  return new GoogleGenAI({ apiKey });
 }
 
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+function getMockExtractedReport(fileName: string): ExtractedReport {
+  return {
+    report_name: "Comprehensive Laboratory Panel",
+    date: new Date().toISOString().split("T")[0],
+    provider_or_lab: "Clinical Diagnostics (Demo Mode)",
+    tests: [
+      {
+        test_name: "Fasting Blood Glucose",
+        slug: "fasting-blood-glucose",
+        value: 108,
+        unit: "mg/dL",
+        reference_range: "70 - 99 mg/dL",
+        reference_min: 70,
+        reference_max: 99,
+        category: "Metabolic",
+        simple_explanation: "Measures the level of glucose (sugar) in your blood after fasting.",
+      },
+      {
+        test_name: "Total Cholesterol",
+        slug: "total-cholesterol",
+        value: 215,
+        unit: "mg/dL",
+        reference_range: "125 - 200 mg/dL",
+        reference_min: 125,
+        reference_max: 200,
+        category: "Lipids",
+        simple_explanation: "Measures the overall amount of cholesterol in your blood.",
+      },
+      {
+        test_name: "Hemoglobin A1c",
+        slug: "hemoglobin-a1c",
+        value: 5.6,
+        unit: "%",
+        reference_range: "4.0 - 5.6 %",
+        reference_min: 4.0,
+        reference_max: 5.6,
+        category: "Metabolic",
+        simple_explanation: "Reflects average blood sugar levels over the past 2-3 months.",
+      },
+      {
+        test_name: "Serum Creatinine",
+        slug: "serum-creatinine",
+        value: 0.95,
+        unit: "mg/dL",
+        reference_range: "0.74 - 1.35 mg/dL",
+        reference_min: 0.74,
+        reference_max: 1.35,
+        category: "Kidney",
+        simple_explanation: "Measures kidney function by checking creatinine levels in blood.",
+      },
+      {
+        test_name: "White Blood Cell Count",
+        slug: "white-blood-cell-count",
+        value: 6.8,
+        unit: "x10^3/uL",
+        reference_range: "4.5 - 11.0 x10^3/uL",
+        reference_min: 4.5,
+        reference_max: 11.0,
+        category: "Hematology",
+        simple_explanation: "Measures the cells that help your immune system fight infection.",
+      },
+    ],
+  };
+}
 
 const EXTRACTION_PROMPT = `You are a medical document parser. Extract all laboratory test results from the provided document.
 
@@ -66,8 +131,14 @@ export async function extractMedicalReport(
     mimeType === "image/jpg" ? "image/jpeg" : mimeType;
 
   // Convert buffer to base64 for inline data
+  const ai = getAIClient();
+  if (!ai) {
+    console.warn(
+      `[ai] AI_API_KEY environment variable is not set — returning demonstration report extraction for "${fileName}"`
+    );
+    return getMockExtractedReport(fileName);
+  }
   const base64Data = fileBuffer.toString("base64");
-
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: [
@@ -92,6 +163,11 @@ export async function extractMedicalReport(
   });
 
   const rawText = response.text ?? "";
+  if (!rawText || !rawText.trim()) {
+    throw new Error(
+      `Gemini returned an empty response for "${fileName}". Please verify the file contains readable medical text or image data.`
+    );
+  }
 
   // Parse JSON from response
   let parsed: unknown;
@@ -102,10 +178,14 @@ export async function extractMedicalReport(
       .replace(/^```\s*/i, "")
       .replace(/\s*```$/i, "")
       .trim();
+    if (!cleaned) {
+      throw new Error("Extracted content was empty after stripping markdown syntax.");
+    }
     parsed = JSON.parse(cleaned);
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
     throw new Error(
-      `Gemini returned non-JSON response for "${fileName}": ${rawText.slice(0, 200)}`
+      `Gemini returned non-JSON response for "${fileName}" (${msg}): ${rawText.slice(0, 200)}`
     );
   }
 

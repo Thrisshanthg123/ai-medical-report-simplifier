@@ -7,7 +7,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const text = await request.text();
+    if (!text || !text.trim()) {
+      return NextResponse.json(
+        { error: "Empty request body" },
+        { status: 400 }
+      );
+    }
+    const body = JSON.parse(text);
     const mlResult = await fetchMLAnalysis(body);
     
     if (!mlResult) {

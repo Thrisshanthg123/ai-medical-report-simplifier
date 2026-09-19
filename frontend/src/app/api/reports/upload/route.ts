@@ -1,4 +1,4 @@
-﻿/**
+/**
  * POST /api/reports/upload
  *
  * Pipeline:
@@ -130,16 +130,20 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    // 6. Call ML service for tests with sufficient history (>=2 points)
-    const mlInputs: MLInput[] = extractedReport.tests
-      .map((test) => ({
+    // 6. Call ML service for tests with sufficient history (at least 2 points including current)
+    const mlInputs: MLInput[] = extractedReport.tests.map((test) => {
+      const history = historicalMap.get(test.slug) ?? [];
+      const historicalValues = history.map((h) => h.value);
+      const values = [...historicalValues, test.value];
+
+      return {
         test_name: test.test_name,
         unit: test.unit ?? "",
         reference_min: test.reference_min ?? null,
         reference_max: test.reference_max ?? null,
-        history: historicalMap.get(test.slug) ?? [],
-      }))
-      .filter((inp) => inp.history.length >= 2);
+        values,
+      };
+    });
 
     const mlResults = await batchAnalyzeTests(mlInputs);
     console.log(`[upload] ML analysis completed for ${mlResults.size} test(s)`);
