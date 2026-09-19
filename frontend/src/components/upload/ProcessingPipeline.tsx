@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -101,10 +101,24 @@ export function ProcessingPipeline({
         // Step 3: Historical ML (show while processing response)
         setCurrentStep(3);
 
-        const data = await response.json();
+        const text = await response.text();
+        let data: any = {};
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch {
+          throw new Error(
+            `Server returned non-JSON response (status ${response.status}). ${
+              text ? text.slice(0, 150) : "Empty response body."
+            }`
+          );
+        }
 
         if (!response.ok || !data.success) {
-          throw new Error(data.error ?? `Upload failed with status ${response.status}`);
+          const serverError =
+            data.error ||
+            data.message ||
+            `Upload failed with status ${response.status}`;
+          throw new Error(serverError);
         }
 
         // Step 4: Saving to database

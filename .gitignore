@@ -16,6 +16,7 @@ __pycache__/
 *.pyc
 ml/venv/
 ml/.venv/
+.pytest_cache/
 
 # Medical/user data (ignore all except training data)
 ml/data/*
@@ -26,6 +27,10 @@ ml/models/*.pth
 ml/models/*.pt
 ml/models/*.joblib
 !ml/models/anomaly_models.pkl
+
+# TokenCap / AI tool internal files (contain local context, not for repo)
+.tokencap/
+.kilo/
 
 # Logs
 *.log
