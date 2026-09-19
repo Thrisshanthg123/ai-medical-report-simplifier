@@ -1,9 +1,13 @@
 from typing import List, Union, Dict, Any
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 import sys
 import os
 import tempfile
+
+# .env lives at the project root, two levels up from ml/app/
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
 from app.schemas import (
     TestInput,
@@ -19,6 +23,7 @@ from app.features import calculate_feature_statistics
 from app.trend import calculate_trend
 from app.anomaly import detect_anomaly
 from app.reference_range import analyze_reference_range
+from app.gemini_parser import parse_report_to_tests
 
 # Let Python find the "ocr" folder, which lives at the project root
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -96,6 +101,20 @@ async def extract_text_from_upload(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail=str(e))
     finally:
         os.remove(tmp_path)
+
+@app.post("/structure-report")
+def structure_report(payload: dict):
+    """
+    Takes raw OCR text and returns structured test data
+    (ready to feed into /analyze/batch).
+    Expects: {"text": "raw extracted text here"}
+    """
+    text = payload.get("text", "")
+    try:
+        structured_tests = parse_report_to_tests(text)
+        return {"tests": structured_tests}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/analyze", response_model=MLFindingsOutput)
 def analyze_test(payload: TestInput):
