@@ -9,17 +9,26 @@ import {
   ReportStatus,
   MLAnalysis,
 } from "@/types/medical";
+import { MOCK_REPORTS, MOCK_TESTS_LATEST } from "./mock-data";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+const rawSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const rawSupabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl) {
-  throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL");
-}
+export const isSupabaseConfigured = Boolean(
+  rawSupabaseUrl &&
+    rawSupabaseKey &&
+    !rawSupabaseUrl.includes("placeholder") &&
+    rawSupabaseUrl.startsWith("http")
+);
 
-if (!supabaseKey) {
-  throw new Error("Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
-}
+const supabaseUrl = isSupabaseConfigured
+  ? rawSupabaseUrl!
+  : "https://placeholder.supabase.co";
+const supabaseKey = isSupabaseConfigured
+  ? rawSupabaseKey!
+  : "placeholder-anon-key";
 
 export const supabase = createClient(
   supabaseUrl,
@@ -192,6 +201,10 @@ export function mapDbReportToMedicalReport(
  * Maps DB rows to MedicalReport array with computed tests_count and summary counters.
  */
 export async function getReports(): Promise<MedicalReport[]> {
+  if (!isSupabaseConfigured) {
+    return [...MOCK_REPORTS];
+  }
+
   const { data, error } = await supabase
     .from("reports")
     .select("*, tests(*)")
@@ -215,6 +228,11 @@ export async function getReports(): Promise<MedicalReport[]> {
  * Maps DB rows into MedicalReport structure.
  */
 export async function getReportById(reportId: string): Promise<MedicalReport | null> {
+  if (!isSupabaseConfigured) {
+    const found = MOCK_REPORTS.find((r) => r.id === reportId);
+    return found ? JSON.parse(JSON.stringify(found)) : null;
+  }
+
   const { data, error } = await supabase
     .from("reports")
     .select("*, tests(*)")
@@ -239,6 +257,11 @@ export async function getReportById(reportId: string): Promise<MedicalReport | n
  * Maps rows into HistoricalValue objects with generated month_label.
  */
 export async function getHistoricalTestValues(slug: string): Promise<HistoricalValue[]> {
+  if (!isSupabaseConfigured) {
+    const test = MOCK_TESTS_LATEST.find((t) => t.slug === slug);
+    return test?.historical_values ? JSON.parse(JSON.stringify(test.historical_values)) : [];
+  }
+
   const { data, error } = await supabase
     .from("tests")
     .select("*, reports!inner(id, report_date)")
