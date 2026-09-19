@@ -3,28 +3,23 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Sparkles, HelpCircle } from "lucide-react";
-import { UploadDropzone } from "@/components/upload/UploadDropzone";
+import { UploadDropzone, SelectedMedicalFile } from "@/components/upload/UploadDropzone";
 import { ProcessingPipeline } from "@/components/upload/ProcessingPipeline";
 import { DisclaimerNotice } from "@/components/ui/DisclaimerNotice";
 
 export default function UploadPage() {
-  const [file, setFile] = useState<{
-    name: string;
-    size: number;
-    type: string;
-  } | null>(null);
+  const [file, setFile] = useState<SelectedMedicalFile | null>(null);
 
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleFileSelect = (selected: {
-    name: string;
-    size: number;
-    type: string;
-  }) => {
+  const handleFileSelect = (selected: SelectedMedicalFile) => {
     setFile(selected);
   };
 
   const handleFileRemove = () => {
+    if (file?.previewUrl) {
+      URL.revokeObjectURL(file.previewUrl);
+    }
     setFile(null);
     setIsProcessing(false);
   };

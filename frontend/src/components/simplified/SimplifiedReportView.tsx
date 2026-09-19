@@ -23,6 +23,9 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TrendBadge } from "@/components/ui/TrendBadge";
 import { AnomalyBadge } from "@/components/ui/AnomalyBadge";
 import { DisclaimerNotice } from "@/components/ui/DisclaimerNotice";
+import { ImportantFindings } from "./ImportantFindings";
+import { MedicalTermsExplained } from "./MedicalTermsExplained";
+import { ClearNextActions } from "./ClearNextActions";
 
 interface SimplifiedReportViewProps {
   report: MedicalReport;
@@ -164,11 +167,17 @@ export function SimplifiedReportView({ report }: SimplifiedReportViewProps) {
           </div>
         </div>
 
-        {/* Section 2: Detailed Test Breakdown */}
+        {/* Section 2: Important Findings */}
+        <ImportantFindings report={report} />
+
+        {/* Section 3: Medical Terms Explained */}
+        <MedicalTermsExplained report={report} />
+
+        {/* Section 4: Detailed Test Breakdown */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-white print:text-black uppercase tracking-wider">
-              2. Biomarker Breakdown & Explanations
+              4. Biomarker Breakdown & Explanations
             </h2>
             <span className="text-xs text-slate-400 print:text-slate-600">
               {report.tests.length} tests examined
@@ -248,40 +257,16 @@ export function SimplifiedReportView({ report }: SimplifiedReportViewProps) {
           </div>
         </div>
 
-        {/* Section 3: Questions to Ask Your Physician */}
-        <div className="p-5 rounded-xl bg-slate-950/70 print:bg-slate-50 border border-slate-800 print:border-slate-200 space-y-3">
-          <div className="flex items-center gap-2">
-            <HelpCircle className="w-4 h-4 text-teal-400 print:text-teal-700" />
-            <h2 className="text-sm font-bold text-white print:text-black uppercase tracking-wider">
-              3. Suggested Questions for Your Next Doctor Consultation
-            </h2>
-          </div>
-          <p className="text-xs text-slate-400 print:text-slate-600">
-            H2 helps you have a more informed conversation with your healthcare team:
-          </p>
-          <ul className="space-y-2 text-xs text-slate-300 print:text-slate-800">
-            <li className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-teal-400 shrink-0 mt-1.5" />
-              <span>
-                &ldquo;I noticed my Fasting Glucose has moved from 91 to 109 mg/dL over the past 4 checkups. Should we discuss any dietary or lifestyle adjustments?&rdquo;
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-teal-400 shrink-0 mt-1.5" />
-              <span>
-                &ldquo;My Vitamin D levels have dropped to 22 ng/mL across recent quarters. Would supplemental Vitamin D or follow-up testing be appropriate for me?&rdquo;
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-teal-400 shrink-0 mt-1.5" />
-              <span>
-                &ldquo;When would you recommend scheduling my next routine follow-up panel?&rdquo;
-              </span>
-            </li>
-          </ul>
-        </div>
+        {/* Section 5: Clear Next Actions & Doctor Discussion Guide */}
+        <ClearNextActions
+          report={report}
+          onPrint={handlePrint}
+          onDownload={handleDownload}
+          isDownloading={downloading}
+          downloadSuccess={downloadSuccess}
+        />
 
-        {/* Section 4: Mandatory Responsible AI Notice */}
+        {/* Mandatory Responsible AI Notice */}
         <DisclaimerNotice />
       </div>
     </div>

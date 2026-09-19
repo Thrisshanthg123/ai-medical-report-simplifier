@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   UploadCloud,
   FileText,
@@ -8,13 +8,29 @@ import {
   Sparkles,
   CheckCircle2,
   AlertCircle,
-  FileSpreadsheet,
+  ImageIcon,
+  RefreshCw,
+  FileCheck,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import {
+  validateMedicalReportFile,
+  formatFileSize,
+  MAX_FILE_SIZE_BYTES,
+} from "@/lib/file-validation";
+
+export interface SelectedMedicalFile {
+  name: string;
+  size: number;
+  type: string;
+  previewUrl?: string;
+  category: "pdf" | "image";
+}
 
 interface UploadDropzoneProps {
-  selectedFile: { name: string; size: number; type: string } | null;
-  onFileSelect: (file: { name: string; size: number; type: string }) => void;
+  selectedFile: SelectedMedicalFile | null;
+  onFileSelect: (file: SelectedMedicalFile) => void;
   onFileRemove: () => void;
   onStartAnalysis: () => void;
   isProcessing: boolean;
@@ -28,136 +44,188 @@ export function UploadDropzone({
   isProcessing,
 }: UploadDropzoneProps) {
   const [isDragOver, setIsDragOver] = useState(false);
-  const [dragError, setDragError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const allowedTypes = [
-    "application/pdf",
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "image/webp",
-  ];
+  // Clean up object URL on unmount if any
+  useEffect(() => {
+    return () => {
+      if (selectedFile?.previewUrl) {
+        URL.revokeObjectURL(selectedFile.previewUrl);
+      }
+    };
+  }, [selectedFile]);
+
+  // Unified file processing and validation logic for both browse and drag-and-drop
+  const processAndValidateFile = (file: File) => {
+    setValidationError(null);
+
+    const validation = validateMedicalReportFile({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
+
+    if (!validation.isValid) {
+      setValidationError(
+        validation.error ||
+          "Unsupported file. Please upload a PDF, JPG, JPEG, or PNG medical report under 25 MB."
+      );
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
+    // Revoke existing preview URL if replacing an earlier file
+    if (selectedFile?.previewUrl) {
+      URL.revokeObjectURL(selectedFile.previewUrl);
+    }
+
+    const category = validation.fileCategory || "pdf";
+    let previewUrl: string | undefined = undefined;
+
+    if (category === "image") {
+      try {
+        previewUrl = URL.createObjectURL(file);
+      } catch (err) {
+        console.warn("Could not create object URL for image preview", err);
+      }
+    }
+
+    onFileSelect({
+      name: file.name,
+      size: file.size,
+      type: file.type || (category === "pdf" ? "application/pdf" : "image/jpeg"),
+      previewUrl,
+      category,
+    });
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragOver(true);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragOver(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragOver(false);
-    setDragError(null);
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
-      if (
-        allowedTypes.includes(file.type) ||
-        file.name.endsWith(".pdf") ||
-        file.name.endsWith(".jpg") ||
-        file.name.endsWith(".jpeg") ||
-        file.name.endsWith(".png")
-      ) {
-        onFileSelect({
-          name: file.name,
-          size: file.size,
-          type: file.type || "application/pdf",
-        });
-      } else {
-        setDragError("Please upload a supported file type: PDF, JPG, or PNG.");
-      }
+      processAndValidateFile(file);
     }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDragError(null);
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      onFileSelect({
-        name: file.name,
-        size: file.size,
-        type: file.type || "application/pdf",
-      });
+      processAndValidateFile(file);
     }
   };
 
-  const loadSampleReport = () => {
-    setDragError(null);
-    onFileSelect({
-      name: "Metabolic_Panel_Sept_2026.pdf",
-      size: 1420500, // 1.4 MB
-      type: "application/pdf",
-    });
+  const handleTriggerBrowse = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  const handleRemove = () => {
+    setValidationError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    onFileRemove();
+  };
+
+  const loadSampleReport = () => {
+    setValidationError(null);
+    if (selectedFile?.previewUrl) {
+      URL.revokeObjectURL(selectedFile.previewUrl);
+    }
+    onFileSelect({
+      name: "Metabolic_Panel_Sept_2026.pdf",
+      size: 1420500, // 1.35 MB
+      type: "application/pdf",
+      category: "pdf",
+    });
   };
 
   return (
     <div className="space-y-6">
-      {/* Drag & Drop Area */}
+      {/* Hidden File Input (Always accessible via Ref) */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        id="medical-report-file-input"
+        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+        onChange={handleFileInputChange}
+        className="hidden"
+        aria-label="Select medical report file (PDF, JPG, JPEG, or PNG up to 25 MB)"
+      />
+
+      {/* State 1: Idle Drag & Drop Area */}
       {!selectedFile ? (
         <div
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200 group relative ${
-            isDragOver
-              ? "border-teal-400 bg-teal-950/30 scale-[1.01]"
-              : "border-slate-700/80 hover:border-teal-500/70 bg-slate-900/40 hover:bg-slate-900/70"
-          }`}
+          onClick={handleTriggerBrowse}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
-              fileInputRef.current?.click();
+              handleTriggerBrowse();
             }
           }}
-          aria-label="Upload report drag and drop zone"
+          aria-label="Upload report drag and drop zone. Press Enter or Space to browse files."
+          className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200 group relative outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
+            isDragOver
+              ? "border-teal-400 bg-teal-950/40 scale-[1.01]"
+              : "border-slate-700 hover:border-teal-500/80 bg-slate-900/40 hover:bg-slate-900/70"
+          }`}
         >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf,.jpg,.jpeg,.png,.webp"
-            onChange={handleFileInputChange}
-            className="hidden"
-          />
-
-          <div className="w-14 h-14 rounded-2xl bg-slate-800/90 border border-slate-700 flex items-center justify-center mx-auto mb-4 text-teal-400 group-hover:scale-110 group-hover:bg-teal-950/60 group-hover:border-teal-700/80 transition-all">
-            <UploadCloud className="w-7 h-7" />
+          <div className="w-16 h-16 rounded-2xl bg-slate-800/90 border border-slate-700 flex items-center justify-center mx-auto mb-4 text-teal-400 group-hover:scale-110 group-hover:bg-teal-950/60 group-hover:border-teal-700/80 transition-all shadow-lg">
+            <UploadCloud className="w-8 h-8" />
           </div>
 
-          <h3 className="text-base font-semibold text-white">
+          <h3 className="text-base sm:text-lg font-semibold text-white">
             Upload your medical report
           </h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto mt-1.5 leading-relaxed">
-            Drag and drop your PDF or image here, or browse from your device.
+          <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto mt-1.5 leading-relaxed">
+            Drag and drop your PDF or image here, or{" "}
+            <span className="text-teal-400 font-medium underline underline-offset-2 group-hover:text-teal-300">
+              browse from your device
+            </span>
+            .
           </p>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-[11px] text-slate-500">
-            <span className="bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/60">
+          {/* Supported Format Badges */}
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs">
+            <span className="bg-slate-800/90 px-2.5 py-1 rounded-md border border-slate-700 font-mono text-slate-300">
               PDF
             </span>
-            <span className="bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/60">
+            <span className="bg-slate-800/90 px-2.5 py-1 rounded-md border border-slate-700 font-mono text-slate-300">
               JPG / JPEG
             </span>
-            <span className="bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/60">
+            <span className="bg-slate-800/90 px-2.5 py-1 rounded-md border border-slate-700 font-mono text-slate-300">
               PNG
             </span>
-            <span>• Up to 25 MB</span>
+            <span className="text-slate-400 font-medium ml-1">
+              • Maximum file size: 25 MB
+            </span>
           </div>
 
-          {/* Sample quick button for evaluators */}
+          {/* Evaluator Quick Shortcut */}
           <div className="mt-6 pt-5 border-t border-slate-800/80">
             <button
               type="button"
@@ -165,7 +233,7 @@ export function UploadDropzone({
                 e.stopPropagation();
                 loadSampleReport();
               }}
-              className="inline-flex items-center gap-1.5 text-xs text-teal-400 hover:text-teal-300 font-medium px-3 py-1.5 rounded-lg bg-teal-950/60 border border-teal-800/60 hover:border-teal-700 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs text-teal-400 hover:text-teal-300 font-medium px-3.5 py-1.5 rounded-lg bg-teal-950/60 border border-teal-800/60 hover:border-teal-700 transition-colors focus-visible:ring-2 focus-visible:ring-teal-400 outline-none"
             >
               <Sparkles className="w-3.5 h-3.5 text-teal-400" />
               <span>Evaluator Shortcut: Load Sample Metabolic Panel (PDF)</span>
@@ -173,64 +241,157 @@ export function UploadDropzone({
           </div>
         </div>
       ) : (
-        /* Selected File Card */
-        <div className="rounded-xl border border-slate-700 bg-slate-900/80 p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-lg bg-teal-950/80 border border-teal-800/60 flex items-center justify-center text-teal-300 shrink-0">
-                <FileText className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <h4 className="text-sm font-semibold text-white truncate">
-                  {selectedFile.name}
-                </h4>
-                <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                  <span>{formatFileSize(selectedFile.size)}</span>
-                  <span>•</span>
-                  <span className="uppercase text-[10px] text-teal-400 bg-teal-950/60 px-1.5 py-0.2 rounded border border-teal-800/40">
-                    {selectedFile.name.split(".").pop() || "Document"}
+        /* State 2: Valid File Selected & Preview Representation */
+        <div className="rounded-2xl border border-slate-700/80 bg-slate-900/90 p-5 sm:p-6 space-y-5 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-slate-800">
+            <div className="flex items-start gap-4 min-w-0">
+              {/* Distinct File Type Representation Icon */}
+              {selectedFile.category === "pdf" ? (
+                <div className="w-12 h-12 rounded-xl bg-rose-950/40 border border-rose-800/60 flex flex-col items-center justify-center text-rose-400 shrink-0 shadow-sm">
+                  <FileText className="w-6 h-6" />
+                  <span className="text-[9px] font-bold font-mono tracking-wider text-rose-300 uppercase">
+                    PDF
+                  </span>
+                </div>
+              ) : (
+                <div className="w-12 h-12 rounded-xl bg-teal-950/50 border border-teal-800/60 flex flex-col items-center justify-center text-teal-400 shrink-0 shadow-sm">
+                  <ImageIcon className="w-6 h-6" />
+                  <span className="text-[9px] font-bold font-mono tracking-wider text-teal-300 uppercase">
+                    IMG
+                  </span>
+                </div>
+              )}
+
+              <div className="min-w-0 space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h4 className="text-sm sm:text-base font-semibold text-white truncate max-w-xs sm:max-w-md">
+                    {selectedFile.name}
+                  </h4>
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-teal-950 text-teal-300 border border-teal-800/60">
+                    {selectedFile.category === "pdf" ? "Clinical PDF" : "Medical Image"}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                  <span className="font-mono text-slate-300">
+                    {formatFileSize(selectedFile.size)}
                   </span>
                   <span>•</span>
-                  <span className="text-emerald-400 flex items-center gap-1 text-[11px]">
-                    <CheckCircle2 className="w-3 h-3" /> Ready for analysis
+                  <span className="text-emerald-400 flex items-center gap-1 font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> File validated &amp; ready
                   </span>
                 </div>
               </div>
             </div>
 
-            <button
-              onClick={onFileRemove}
-              disabled={isProcessing}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors disabled:opacity-50"
-              aria-label="Remove uploaded file"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            {/* Quick Action Controls: Replace / Remove */}
+            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+              <Button
+                type="button"
+                onClick={handleTriggerBrowse}
+                disabled={isProcessing}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1.5"
+                aria-label="Replace selected file with another file"
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-slate-300" />
+                <span>Replace file</span>
+              </Button>
+
+              <button
+                type="button"
+                onClick={handleRemove}
+                disabled={isProcessing}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-rose-400 outline-none"
+                aria-label="Remove selected report file"
+                title="Remove file"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between pt-3 border-t border-slate-800">
-            <div className="text-xs text-slate-400">
-              Targeted analysis: <span className="text-slate-300">Biomarkers, Reference Limits & Historical Trajectory</span>
+          {/* Visual Preview Container */}
+          {selectedFile.category === "image" && selectedFile.previewUrl ? (
+            /* Image Preview */
+            <div className="space-y-2">
+              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+                Local Image Document Preview
+              </span>
+              <div className="relative rounded-xl border border-slate-800 bg-slate-950/80 p-2 flex items-center justify-center max-h-72 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={selectedFile.previewUrl}
+                  alt={`Preview of uploaded medical report: ${selectedFile.name}`}
+                  className="max-h-64 w-auto max-w-full rounded-lg object-contain"
+                />
+              </div>
+            </div>
+          ) : (
+            /* PDF Representation Card */
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-3">
+                <FileCheck className="w-5 h-5 text-teal-400 shrink-0" />
+                <div>
+                  <span className="text-slate-200 font-semibold block">
+                    Portable Document Format (PDF) Verified
+                  </span>
+                  <span className="text-slate-400">
+                    Multi-page text layout and laboratory tables will be processed by H2 OCR &amp; parser.
+                  </span>
+                </div>
+              </div>
+              <span className="hidden sm:inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                Verified Format
+              </span>
+            </div>
+          )}
+
+          {/* Bottom Action Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-slate-800">
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <ShieldCheck className="w-4 h-4 text-teal-400 shrink-0" />
+              <span>
+                Simulated analysis: <strong className="text-slate-300">Fasting Glucose, Hemoglobin, Vitamin D &amp; Historical Trajectories</strong>
+              </span>
             </div>
 
             <Button
+              type="button"
               onClick={onStartAnalysis}
               disabled={isProcessing}
               variant="primary"
               size="md"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 shadow-lg shadow-teal-900/30"
             >
               <Sparkles className="w-4 h-4" />
-              <span>{isProcessing ? "Processing..." : "Analyze Report"}</span>
+              <span>{isProcessing ? "Processing Report..." : "Analyze Report"}</span>
             </Button>
           </div>
         </div>
       )}
 
-      {/* Error display */}
-      {dragError && (
-        <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/80 text-rose-300 text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{dragError}</span>
+      {/* Clearly Visible Validation Error Alert */}
+      {validationError && (
+        <div
+          role="alert"
+          aria-live="polite"
+          className="p-4 rounded-xl bg-rose-950/50 border border-rose-600/70 text-rose-200 text-xs sm:text-sm flex items-start gap-3 shadow-lg animate-fadeIn"
+        >
+          <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+          <div className="space-y-1 flex-1">
+            <h5 className="font-semibold text-rose-100">Upload Validation Error</h5>
+            <p className="text-rose-200/90 leading-relaxed">{validationError}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setValidationError(null)}
+            className="text-rose-400 hover:text-white p-1 transition-colors"
+            aria-label="Dismiss upload error notice"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
     </div>
