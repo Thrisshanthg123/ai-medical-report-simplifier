@@ -1,38 +1,163 @@
 @import "tailwindcss";
 
+@theme {
+  --color-canvas: #FAF9F7;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #F6F4EE;
+  --color-surface-muted: #F2EFE9;
+  --color-border: #E4E1DB;
+  --color-border-strong: #CFCAC1;
+
+  --color-ink: #1C2430;
+  --color-ink-muted: #5B6572;
+
+  --color-brand: #0E5A5F;
+  --color-brand-hover: #0A484C;
+  --color-brand-tint: #E6F1F0;
+
+  --color-status-in-range-text: #1F6B45;
+  --color-status-in-range-bg: #E7F3EC;
+  --color-status-in-range-border: #C6E2D2;
+
+  --color-status-attention-text: #8A5A00;
+  --color-status-attention-bg: #FBF1DC;
+  --color-status-attention-border: #F2DEB0;
+
+  --color-status-outside-text: #A63A2B;
+  --color-status-outside-bg: #FBE9E6;
+  --color-status-outside-border: #F4C7C0;
+
+  --color-status-neutral-text: #3D4A5C;
+  --color-status-neutral-bg: #EEF1F4;
+  --color-status-neutral-border: #D8DEE4;
+
+  --radius-chip: 4px;
+  --radius-control: 6px;
+  --radius-panel: 8px;
+
+  --spacing-target: 44px;
+  --spacing-target-lg: 48px;
+  --width-container: 1120px;
+  --max-width-container: 1120px;
+
+  --font-serif: var(--font-source-serif, "Source Serif 4", Georgia, Cambria, "Times New Roman", serif);
+  --font-sans: var(--font-source-sans, "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
+
 :root {
-  --background: #0a0f18;
-  --foreground: #f1f5f9;
+  --background: #FAF9F7;
+  --foreground: #1C2430;
+  --surface: #FFFFFF;
+  --border: #E4E1DB;
+  --border-strong: #CFCAC1;
+  --muted: #5B6572;
+  --brand: #0E5A5F;
+  --brand-hover: #0A484C;
+  --brand-tint: #E6F1F0;
+}
+
+html {
+  background-color: #FAF9F7;
+  color: #1C2430;
+  font-family: var(--font-sans);
 }
 
 body {
-  background: #0a0f18;
-  color: #f1f5f9;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  background-color: #FAF9F7;
+  color: #1C2430;
+  font-family: var(--font-sans);
+  line-height: 1.6;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Headings font */
+h1, h2, h3, h4, .font-serif {
+  font-family: var(--font-serif);
+}
+
 /* Accessible focus ring */
 :focus-visible {
-  outline: 2px solid #2dd4bf;
+  outline: 2px solid #0E5A5F;
   outline-offset: 2px;
 }
 
-/* Custom subtle scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* Numeric alignment for laboratory values */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
-::-webkit-scrollbar-track {
-  background: #0a0f18;
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -9999px;
+  left: 16px;
+  background: #0E5A5F;
+  color: #FFFFFF;
+  padding: 8px 16px;
+  border-radius: 6px;
+  z-index: 1000;
+  font-weight: 600;
+  text-decoration: none;
 }
-::-webkit-scrollbar-thumb {
-  background: #1f2d42;
-  border-radius: 4px;
+
+.skip-link:focus {
+  top: 16px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #2c3e59;
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print Stylesheet */
+@media print {
+  @page {
+    margin: 12mm 15mm;
+    size: auto;
+  }
+
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  header, footer, nav, button, .no-print, [role="navigation"] {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  a {
+    color: #000000 !important;
+    text-decoration: none !important;
+  }
+
+  /* Prevent table row splits */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  tr, .print-avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Clear borders and backgrounds in print */
+  .border, .border-b, .border-t {
+    border-color: #CFCAC1 !important;
+  }
 }

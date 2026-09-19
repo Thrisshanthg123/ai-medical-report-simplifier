@@ -7,19 +7,19 @@ export default function ReportDetailLoading() {
       role="status"
       aria-busy="true"
       aria-live="polite"
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn"
+      className="max-w-container mx-auto px-4 sm:px-6 py-8 space-y-8"
     >
       <span className="sr-only">Loading clinical report test breakdown...</span>
 
       {/* Report Header Metadata Skeleton */}
-      <div className="p-6 rounded-2xl border border-slate-800 bg-slate-900/80 space-y-6">
+      <div className="p-6 rounded-panel border border-border bg-surface space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Skeleton className="h-4 w-32 rounded-full" />
-              <Skeleton className="h-4 w-24 rounded" />
+              <Skeleton className="h-4 w-32 rounded-chip" />
+              <Skeleton className="h-4 w-24 rounded-chip" />
             </div>
-            <Skeleton className="h-8 w-72 sm:w-96 rounded-lg" />
+            <Skeleton className="h-8 w-72 sm:w-96 rounded-control" />
             <div className="flex flex-wrap items-center gap-4 text-xs">
               <Skeleton className="h-3 w-36" />
               <Skeleton className="h-3 w-40" />
@@ -28,17 +28,17 @@ export default function ReportDetailLoading() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-44 rounded-lg" />
-            <Skeleton className="h-10 w-28 rounded-lg" />
+            <Skeleton className="h-10 w-44 rounded-control" />
+            <Skeleton className="h-10 w-28 rounded-control" />
           </div>
         </div>
       </div>
 
       {/* AI & ML Executive Summary Banner Skeleton */}
-      <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/60 space-y-4">
+      <div className="p-6 rounded-panel border border-border bg-surface-subtle space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Skeleton className="w-5 h-5 rounded" />
+            <Skeleton className="w-5 h-5 rounded-control" />
             <Skeleton className="h-5 w-48" />
           </div>
           <SkeletonBadge />
@@ -48,7 +48,7 @@ export default function ReportDetailLoading() {
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="p-3 rounded-lg bg-slate-900/60 border border-slate-800/80 text-center space-y-1"
+              className="p-3 rounded-control bg-surface border border-border text-center space-y-1"
             >
               <Skeleton className="h-6 w-12 mx-auto" />
               <Skeleton className="h-3 w-20 mx-auto" />
@@ -63,7 +63,7 @@ export default function ReportDetailLoading() {
           <Skeleton className="h-6 w-48" />
           <Skeleton className="h-3.5 w-72" />
         </div>
-        <Skeleton className="h-9 w-40 rounded-lg" />
+        <Skeleton className="h-9 w-40 rounded-control" />
       </div>
 
       {/* Test Results Cards Grid Skeleton (3 columns on desktop) */}
@@ -71,7 +71,7 @@ export default function ReportDetailLoading() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="p-5 rounded-xl border border-slate-800/80 bg-slate-900/60 space-y-4"
+            className="p-5 rounded-panel border border-border bg-surface space-y-4"
           >
             <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-32" />
@@ -81,7 +81,7 @@ export default function ReportDetailLoading() {
               <Skeleton className="h-7 w-24" />
               <Skeleton className="h-3 w-40" />
             </div>
-            <Skeleton className="h-2 w-full rounded-full" />
+            <Skeleton className="h-2 w-full rounded-chip" />
             <SkeletonText lines={2} />
           </div>
         ))}

@@ -1,6 +1,6 @@
 import React from "react";
-import { Sparkles } from "lucide-react";
-import { Badge } from "./Badge";
+import { AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AnomalyBadgeProps {
   label?: string;
@@ -8,16 +8,18 @@ interface AnomalyBadgeProps {
 }
 
 export function AnomalyBadge({
-  label = "Unusual change detected",
+  label = "Worth attention",
   className,
 }: AnomalyBadgeProps) {
   return (
-    <Badge
-      variant="warning"
-      className={className}
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-chip text-xs font-medium border bg-status-attention-bg text-status-attention-text border-status-attention-border",
+        className
+      )}
     >
-      <Sparkles className="w-3 h-3 text-amber-400" />
+      <AlertCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
       <span>{label}</span>
-    </Badge>
+    </span>
   );
 }

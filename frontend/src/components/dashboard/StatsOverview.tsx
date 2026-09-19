@@ -19,30 +19,26 @@ export function StatsOverview({
     {
       label: "Reports Analyzed",
       value: reportsAnalyzed.toString(),
-      subtext: "Across 4 quarters",
+      subtext: "Across recorded visits",
       icon: FileCheck,
-      accent: "text-teal-400 bg-teal-950/60 border-teal-800/60",
     },
     {
       label: "Tests Tracked",
       value: testsTracked.toString(),
-      subtext: "Longitudinal markers",
+      subtext: "Tracked over time",
       icon: Activity,
-      accent: "text-blue-400 bg-blue-950/60 border-blue-800/60",
     },
     {
       label: "Trends Detected",
       value: trendsDetected.toString(),
       subtext: "Identified by ML model",
       icon: TrendingUp,
-      accent: "text-amber-400 bg-amber-950/60 border-amber-800/60",
     },
     {
       label: "Reports This Month",
       value: reportsThisMonth.toString(),
-      subtext: "September 2026",
+      subtext: "Recent checkup activity",
       icon: Calendar,
-      accent: "text-emerald-400 bg-emerald-950/60 border-emerald-800/60",
     },
   ];
 
@@ -51,16 +47,18 @@ export function StatsOverview({
       {stats.map((stat, idx) => {
         const Icon = stat.icon;
         return (
-          <Card key={idx} className="p-4 relative overflow-hidden group hover:border-slate-700/80">
+          <Card key={idx} className="p-4 relative overflow-hidden">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400">{stat.label}</span>
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${stat.accent}`}>
-                <Icon className="w-4 h-4" />
+              <span className="text-xs font-medium text-ink-muted">{stat.label}</span>
+              <div className="w-8 h-8 rounded-control flex items-center justify-center border border-border bg-surface-subtle text-ink">
+                <Icon className="w-4 h-4" aria-hidden="true" />
               </div>
             </div>
             <div className="mt-2">
-              <span className="text-2xl font-bold text-white tracking-tight">{stat.value}</span>
-              <span className="text-[11px] text-slate-500 block mt-0.5">{stat.subtext}</span>
+              <span className="text-2xl font-semibold text-ink tracking-tight tabular-nums">
+                {stat.value}
+              </span>
+              <span className="text-xs text-ink-muted block mt-0.5">{stat.subtext}</span>
             </div>
           </Card>
         );

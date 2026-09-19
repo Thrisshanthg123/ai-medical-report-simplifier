@@ -19,29 +19,29 @@ interface ReportHeaderProps {
 
 export function ReportHeader({ report }: ReportHeaderProps) {
   return (
-    <div className="space-y-4 pb-6 border-b border-slate-800/80">
+    <div className="space-y-4 pb-6 border-b border-border">
       {/* Top Navigation Row */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink transition-colors"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
           <span>Back to Dashboard</span>
         </Link>
 
         <div className="flex items-center gap-2">
           <Link href={`/compare?compare=${report.id}`}>
-            <Button variant="secondary" size="sm">
-              <GitCompare className="w-3.5 h-3.5" />
-              <span>Compare Reports</span>
+            <Button variant="outline" size="sm">
+              <GitCompare className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Compare reports</span>
             </Button>
           </Link>
 
           <Link href={`/simplified/${report.id}`}>
             <Button variant="primary" size="sm">
-              <FileCheck2 className="w-3.5 h-3.5" />
-              <span>Simplified Summary</span>
+              <FileCheck2 className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Simplified report</span>
             </Button>
           </Link>
         </div>
@@ -51,30 +51,30 @@ export function ReportHeader({ report }: ReportHeaderProps) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-xs font-semibold uppercase tracking-wider text-teal-400">
-              Laboratory Diagnostics Panel
+            <span className="text-xs font-semibold uppercase tracking-wider text-brand">
+              Laboratory Report Details
             </span>
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800 text-emerald-300">
-              Analysis Verified
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-chip bg-surface-subtle border border-border text-ink-muted">
+              Structured Record
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif font-semibold text-ink tracking-tight">
             {report.report_name}
           </h1>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-xs text-slate-400">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-xs text-ink-muted">
             <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-slate-400" />
-              Date: <strong className="text-slate-200">{formatDate(report.date)}</strong>
+              <Calendar className="w-3.5 h-3.5 text-ink-muted" aria-hidden="true" />
+              Date: <strong className="text-ink font-medium">{formatDate(report.date)}</strong>
             </span>
-            <span className="text-slate-600">•</span>
+            <span>•</span>
             <span className="flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-slate-400" />
-              Facility: <strong className="text-slate-200">{report.provider_or_lab}</strong>
+              <Building2 className="w-3.5 h-3.5 text-ink-muted" aria-hidden="true" />
+              Facility: <strong className="text-ink font-medium">{report.provider_or_lab}</strong>
             </span>
-            <span className="text-slate-600">•</span>
+            <span>•</span>
             <span className="flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-slate-400" />
-              Tests Extracted: <strong className="text-slate-200">{report.tests_count} biomarkers</strong>
+              <FileText className="w-3.5 h-3.5 text-ink-muted" aria-hidden="true" />
+              Tests Extracted: <strong className="text-ink font-medium">{report.tests_count} tests</strong>
             </span>
           </div>
         </div>

@@ -15,33 +15,31 @@ export function DisclaimerNotice({
     return (
       <div
         className={cn(
-          "text-xs text-slate-500 flex items-center justify-center gap-2 py-4 border-t border-slate-800/80 px-4 text-center",
+          "text-xs text-ink-muted flex items-center justify-center gap-2 py-4 border-t border-border px-4 text-center",
           className
         )}
       >
-        <Info className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <Info className="w-4 h-4 text-ink-muted shrink-0" aria-hidden="true" />
         <span>
-          H2 is designed to help users understand and track reported medical information.
-          It does not provide medical diagnoses or replace professional medical advice.
+          H2 is an informational tool for reading medical reports. It does not provide medical diagnoses or replace clinical care.
         </span>
       </div>
     );
   }
 
   return (
-    <div
+    <aside
+      aria-label="Medical disclaimer"
       className={cn(
-        "flex items-start gap-2.5 p-3 rounded-lg bg-slate-900/40 border border-slate-800 text-xs text-slate-400",
+        "flex items-start gap-3 p-4 rounded-panel bg-surface-subtle border border-border text-xs text-ink-muted leading-relaxed",
         className
       )}
     >
-      <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-      <p className="leading-relaxed">
-        <strong className="text-slate-300 font-medium">Important note:</strong> H2 is
-        designed to help users understand and track reported medical information. It does
-        not provide medical diagnoses or replace professional medical advice. Always consult
-        a qualified physician with any questions.
+      <Info className="w-4 h-4 text-ink-muted shrink-0 mt-0.5" aria-hidden="true" />
+      <p>
+        <strong className="text-ink font-semibold">Important notice:</strong>{" "}
+        This summary is generated to help you understand terminology and trends present in your laboratory report. It does not provide a diagnosis, prognosis, or medical recommendation. Always consult a qualified physician or healthcare provider regarding any health condition or lab result.
       </p>
-    </div>
+    </aside>
   );
 }

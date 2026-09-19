@@ -1,28 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import {
-  Download,
-  Printer,
-  FileCheck2,
-  Calendar,
-  Building2,
-  Sparkles,
-  ArrowLeft,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  Check,
-  TrendingUp,
-} from "lucide-react";
+import { Printer, ArrowLeft, UploadCloud } from "lucide-react";
 import { MedicalReport } from "@/types/medical";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
-import { StatusBadge } from "@/components/ui/StatusBadge";
-import { TrendBadge } from "@/components/ui/TrendBadge";
-import { AnomalyBadge } from "@/components/ui/AnomalyBadge";
-import { DisclaimerNotice } from "@/components/ui/DisclaimerNotice";
 import { ImportantFindings } from "./ImportantFindings";
 import { MedicalTermsExplained } from "./MedicalTermsExplained";
 import { ClearNextActions } from "./ClearNextActions";
@@ -32,18 +15,6 @@ interface SimplifiedReportViewProps {
 }
 
 export function SimplifiedReportView({ report }: SimplifiedReportViewProps) {
-  const [downloading, setDownloading] = useState(false);
-  const [downloadSuccess, setDownloadSuccess] = useState(false);
-
-  const handleDownload = () => {
-    setDownloading(true);
-    setTimeout(() => {
-      setDownloading(false);
-      setDownloadSuccess(true);
-      setTimeout(() => setDownloadSuccess(false), 3000);
-    }, 1200);
-  };
-
   const handlePrint = () => {
     if (typeof window !== "undefined") {
       window.print();
@@ -51,223 +22,101 @@ export function SimplifiedReportView({ report }: SimplifiedReportViewProps) {
   };
 
   return (
-    <div className="space-y-8 print:p-0">
-      {/* Action Bar (Hidden when printing) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+    <div className="space-y-6 print:space-y-4 print:p-0">
+      {/* Top Action Bar (Hidden when printing) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
         <Link
-          href={`/reports/${report.id}`}
-          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+          href="/dashboard"
+          className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink transition-colors min-h-target sm:min-h-0"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Technical Clinical View</span>
+          <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+          <span>Back to dashboard</span>
         </Link>
 
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={handlePrint}
-            variant="secondary"
-            size="sm"
-            className="flex items-center gap-1.5"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Print View</span>
-          </Button>
+        <div className="flex items-center gap-2.5">
+          <Link href="/upload">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="flex items-center gap-1.5"
+            >
+              <UploadCloud className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Upload another report</span>
+            </Button>
+          </Link>
 
           <Button
-            onClick={handleDownload}
-            disabled={downloading}
-            variant="primary"
+            onClick={handlePrint}
+            variant="outline"
             size="sm"
             className="flex items-center gap-1.5"
           >
-            {downloadSuccess ? (
-              <>
-                <Check className="w-3.5 h-3.5 text-emerald-300" />
-                <span>Summary Downloaded</span>
-              </>
-            ) : downloading ? (
-              <span>Generating PDF...</span>
-            ) : (
-              <>
-                <Download className="w-3.5 h-3.5" />
-                <span>Download Simplified Report</span>
-              </>
-            )}
+            <Printer className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>Print</span>
           </Button>
         </div>
       </div>
 
-      {/* Printable Simplified Document Container */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-6 sm:p-10 space-y-8 shadow-xl print:border-none print:bg-white print:text-black">
+      {/* Main Printable Document Card */}
+      <div className="bg-surface border border-border rounded-panel p-6 sm:p-8 space-y-8 print:border-none print:p-0 print:space-y-6">
         {/* Document Header */}
-        <div className="border-b border-slate-800 pb-6 print:border-slate-300">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-teal-400 print:text-teal-700">
-                  H2 Patient-Friendly Summary
-                </span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 print:bg-slate-100 text-slate-300 print:text-slate-700">
-                  Plain-Language Edition
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white print:text-black tracking-tight">
-                {report.report_name}
-              </h1>
-            </div>
+        <div className="border-b border-border pb-6 space-y-3">
+          <h1 className="text-2xl sm:text-3xl font-serif font-semibold text-ink tracking-tight">
+            {report.report_name}
+          </h1>
 
-            <div className="text-left sm:text-right text-xs text-slate-400 print:text-slate-600 space-y-1">
-              <p>
-                Date: <strong className="text-slate-200 print:text-black">{formatDate(report.date)}</strong>
-              </p>
-              <p>
-                Laboratory: <strong className="text-slate-200 print:text-black">{report.provider_or_lab}</strong>
-              </p>
-              <p>Patient: <strong className="text-slate-200 print:text-black">Alex Morgan (Demo)</strong></p>
-            </div>
-          </div>
-        </div>
-
-        {/* Section 1: Executive Overview in Plain English */}
-        <div className="rounded-xl bg-slate-950/70 print:bg-slate-50 border border-slate-800 print:border-slate-200 p-5 space-y-3">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-teal-400 print:text-teal-600" />
-            <h2 className="text-sm font-bold text-white print:text-black uppercase tracking-wider">
-              1. What This Report Tells You
-            </h2>
-          </div>
-          <p className="text-sm text-slate-300 print:text-slate-800 leading-relaxed">
-            {report.summary.overview_text}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-            <div className="p-3 rounded-lg bg-slate-900 print:bg-white border border-slate-800 print:border-slate-200 text-center">
-              <span className="text-2xl font-bold text-emerald-400 print:text-emerald-700">
-                {report.summary.within_range_count}
-              </span>
-              <span className="text-xs text-slate-400 print:text-slate-600 block">
-                Tests within reference boundaries
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-slate-900 print:bg-white border border-slate-800 print:border-slate-200 text-center">
-              <span className="text-2xl font-bold text-amber-400 print:text-amber-700">
-                {report.summary.outside_range_count}
-              </span>
-              <span className="text-xs text-slate-400 print:text-slate-600 block">
-                Tests outside reference boundaries
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-slate-900 print:bg-white border border-slate-800 print:border-slate-200 text-center">
-              <span className="text-2xl font-bold text-indigo-400 print:text-indigo-700">
-                {report.summary.trends_detected_count}
-              </span>
-              <span className="text-xs text-slate-400 print:text-slate-600 block">
-                Longitudinal trends detected
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Section 2: Important Findings */}
-        <ImportantFindings report={report} />
-
-        {/* Section 3: Medical Terms Explained */}
-        <MedicalTermsExplained report={report} />
-
-        {/* Section 4: Detailed Test Breakdown */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-white print:text-black uppercase tracking-wider">
-              4. Biomarker Breakdown & Explanations
-            </h2>
-            <span className="text-xs text-slate-400 print:text-slate-600">
-              {report.tests.length} tests examined
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-ink-muted">
+            <span>
+              Date:{" "}
+              <strong className="text-ink font-medium">
+                {formatDate(report.date)}
+              </strong>
+            </span>
+            <span>
+              Laboratory / Provider:{" "}
+              <strong className="text-ink font-medium">
+                {report.provider_or_lab}
+              </strong>
             </span>
           </div>
 
-          <div className="space-y-4">
-            {report.tests.map((test) => (
-              <div
-                key={test.slug}
-                className="p-4 rounded-xl bg-slate-950/40 print:bg-slate-50 border border-slate-800 print:border-slate-200 space-y-3"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <h3 className="text-base font-bold text-white print:text-black">
-                      {test.test_name}
-                    </h3>
-                    <span className="text-[11px] text-slate-400 print:text-slate-600 font-mono">
-                      Category: {test.category}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <StatusBadge status={test.status} />
-                    <TrendBadge trend={test.trend} compact />
-                    {test.anomaly && <AnomalyBadge label="Shift detected" />}
-                  </div>
-                </div>
-
-                {/* Values & Range */}
-                <div className="flex flex-wrap items-baseline gap-4 text-xs text-slate-300 print:text-slate-800 pt-1">
-                  <span>
-                    Reported Value:{" "}
-                    <strong className="text-white print:text-black font-bold text-sm">
-                      {test.value} {test.unit}
-                    </strong>
-                  </span>
-                  <span>•</span>
-                  <span>
-                    Typical Reference Interval:{" "}
-                    <strong className="text-slate-200 print:text-slate-900 font-mono">
-                      {test.reference_range}
-                    </strong>
-                  </span>
-                  {test.previous_value !== undefined && (
-                    <>
-                      <span>•</span>
-                      <span>
-                        Previous Report:{" "}
-                        <strong className="text-slate-200 print:text-slate-900 font-mono">
-                          {test.previous_value} {test.unit}
-                        </strong>
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                {/* Plain-Language Explanation */}
-                <p className="text-xs text-slate-300 print:text-slate-700 leading-relaxed">
-                  <strong className="text-slate-200 print:text-black">What this test means: </strong>
-                  {test.simple_explanation}
-                </p>
-
-                {/* Machine Learning Trend Analysis */}
-                {test.ml_analysis && (
-                  <div className="p-3 rounded-lg bg-slate-900 print:bg-white border border-slate-800 print:border-slate-200 text-xs">
-                    <span className="text-[11px] uppercase font-semibold text-teal-400 print:text-teal-700 block mb-1">
-                      Historical Trend Insight ({test.ml_analysis.change_label}):
-                    </span>
-                    <p className="text-slate-300 print:text-slate-700 italic">
-                      &ldquo;{test.ml_analysis.explanation}&rdquo;
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
+          {/* Clinical Advice & AI Notice */}
+          <div className="p-3 rounded-control bg-surface-subtle border border-border text-xs text-ink-muted leading-relaxed">
+            <strong className="text-ink font-medium">Notice:</strong> AI-generated
+            explanation. Not medical advice. Please review with your doctor.
           </div>
         </div>
 
-        {/* Section 5: Clear Next Actions & Doctor Discussion Guide */}
-        <ClearNextActions
-          report={report}
-          onPrint={handlePrint}
-          onDownload={handleDownload}
-          isDownloading={downloading}
-          downloadSuccess={downloadSuccess}
-        />
+        {/* Section 1: "In short" */}
+        <section aria-labelledby="in-short-heading" className="space-y-3">
+          <h2
+            id="in-short-heading"
+            className="text-lg font-serif font-semibold text-ink"
+          >
+            In short
+          </h2>
+          <p className="text-lg text-ink max-w-prose leading-relaxed">
+            {report.summary?.overview_text}
+          </p>
 
-        {/* Mandatory Responsible AI Notice */}
-        <DisclaimerNotice />
+          {report.summary?.key_takeaways &&
+            report.summary.key_takeaways.length > 0 && (
+              <ul className="mt-3 space-y-1.5 list-disc list-inside text-sm text-ink-muted max-w-prose">
+                {report.summary.key_takeaways.map((takeaway, idx) => (
+                  <li key={idx}>{takeaway}</li>
+                ))}
+              </ul>
+            )}
+        </section>
+
+        {/* Section 2: "Key findings" */}
+        <ImportantFindings report={report} />
+
+        {/* Section 3: "Questions to ask your doctor" */}
+        <ClearNextActions report={report} />
+
+        {/* Section 4: "Terms explained" */}
+        <MedicalTermsExplained report={report} />
       </div>
     </div>
   );

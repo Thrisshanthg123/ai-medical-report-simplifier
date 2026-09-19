@@ -1,17 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Activity,
   Upload,
   LayoutDashboard,
   History,
   GitCompare,
   Menu,
   X,
-  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,29 +24,46 @@ export function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Close mobile drawer on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+      }
+    };
+    if (mobileOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [mobileOpen]);
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-white font-bold shadow-sm shadow-teal-500/20 group-hover:scale-105 transition-transform">
-            <Activity className="w-5 h-5 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold text-lg text-white tracking-tight">H2</span>
-              <span className="text-[10px] uppercase font-semibold tracking-wider text-teal-400 bg-teal-950/80 border border-teal-800/60 px-1.5 py-0.2 rounded">
-                Evaluator Preview
-              </span>
-            </div>
-            <span className="text-[11px] text-slate-400 -mt-1 font-normal hidden sm:inline">
-              Medical Report Simplifier
-            </span>
-          </div>
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-surface">
+      <div className="max-w-container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        {/* Logo / Brand Wordmark */}
+        <Link
+          href="/"
+          className="flex items-baseline gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 rounded-control"
+          aria-label="H2 Medical Report Simplifier Home"
+        >
+          <span className="font-serif font-semibold text-2xl text-ink tracking-tight">
+            H2
+          </span>
+          <span className="text-xs text-ink-muted hidden sm:inline font-normal">
+            Medical Report Simplifier
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav
+          className="hidden md:flex items-center gap-6 h-full"
+          aria-label="Main Navigation"
+        >
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -60,44 +75,56 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                  "inline-flex items-center gap-2 h-16 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2",
                   isActive
-                    ? "bg-slate-800 text-teal-300 shadow-inner"
-                    : "text-slate-300 hover:text-white hover:bg-slate-800/50"
+                    ? "border-brand text-brand font-semibold"
+                    : "border-transparent text-ink-muted hover:text-ink hover:border-border-strong"
                 )}
               >
-                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-teal-400" : "text-slate-400")} />
+                <Icon className="w-4 h-4" aria-hidden="true" />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Primary CTA */}
+        {/* Primary Action Button */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/upload"
-            className="inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white transition-all shadow-sm shadow-teal-900/30 hover:shadow-teal-900/50 active:scale-95"
+            className="inline-flex items-center gap-2 min-h-target px-4 py-2 rounded-control bg-brand hover:bg-brand-hover text-surface font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
           >
-            <Upload className="w-3.5 h-3.5" />
-            <span>Upload Report</span>
+            <Upload className="w-4 h-4" aria-hidden="true" />
+            <span>Upload report</span>
           </Link>
         </div>
 
         {/* Mobile menu trigger */}
         <button
+          type="button"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
-          aria-label="Toggle navigation menu"
+          className="md:hidden min-h-target min-w-target inline-flex items-center justify-center p-2 rounded-control text-ink-muted hover:text-ink hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-navigation"
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {mobileOpen ? (
+            <X className="w-6 h-6" aria-hidden="true" />
+          ) : (
+            <Menu className="w-6 h-6" aria-hidden="true" />
+          )}
         </button>
       </div>
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="md:hidden border-b border-slate-800 bg-slate-900/95 px-4 pt-2 pb-4 space-y-1">
+        <nav
+          id="mobile-navigation"
+          aria-label="Mobile Navigation"
+          className="md:hidden border-b border-border bg-surface px-4 pt-2 pb-4 space-y-1"
+        >
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -109,15 +136,15 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setMobileOpen(false)}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                  "flex items-center gap-3 min-h-target-lg px-3 py-3 rounded-control text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand",
                   isActive
-                    ? "bg-slate-800 text-teal-300"
-                    : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                    ? "bg-brand-tint text-brand font-semibold"
+                    : "text-ink-muted hover:text-ink hover:bg-surface-subtle"
                 )}
               >
-                <Icon className={cn("w-4 h-4", isActive ? "text-teal-400" : "text-slate-400")} />
+                <Icon className="w-5 h-5 text-ink-muted" aria-hidden="true" />
                 <span>{item.label}</span>
               </Link>
             );
@@ -125,14 +152,13 @@ export function Navbar() {
           <div className="pt-2">
             <Link
               href="/upload"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-teal-600 text-white font-medium text-sm"
+              className="flex items-center justify-center gap-2 min-h-target-lg w-full py-3 rounded-control bg-brand hover:bg-brand-hover text-surface font-semibold text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
             >
-              <Upload className="w-4 h-4" />
-              <span>Upload Report</span>
+              <Upload className="w-5 h-5" aria-hidden="true" />
+              <span>Upload report</span>
             </Link>
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );

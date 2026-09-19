@@ -14,8 +14,8 @@ export function TestSelectorNav({
 }: TestSelectorNavProps) {
   return (
     <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
-      <span className="text-xs text-slate-400 shrink-0 font-medium mr-1">
-        Switch Biomarker:
+      <span className="text-xs text-ink-muted shrink-0 font-medium mr-1">
+        Select test:
       </span>
       {allTests.map((t) => {
         const isActive = t.slug === currentSlug;
@@ -24,15 +24,15 @@ export function TestSelectorNav({
             key={t.slug}
             href={`/tests/${t.slug}`}
             className={cn(
-              "px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors border",
+              "px-3 py-1.5 rounded-button text-xs font-medium whitespace-nowrap transition-colors border",
               isActive
-                ? "bg-teal-950/80 text-teal-300 border-teal-700/80 shadow-sm"
-                : "bg-slate-900/60 text-slate-400 hover:text-white border-slate-800 hover:border-slate-700"
+                ? "bg-brand text-brand-contrast border-brand"
+                : "bg-surface text-ink-muted hover:text-ink border-border hover:border-border-strong"
             )}
           >
             <span>{t.test_name}</span>
             {t.anomaly && (
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block ml-1.5" />
+              <span className="w-1.5 h-1.5 rounded-full bg-status-warning-text inline-block ml-1.5" />
             )}
           </Link>
         );

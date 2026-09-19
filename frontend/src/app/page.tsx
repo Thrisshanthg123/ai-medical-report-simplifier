@@ -1,225 +1,292 @@
 import React from "react";
 import Link from "next/link";
-import {
-  Upload,
-  ArrowRight,
-  FileText,
-  Cpu,
-  LineChart,
-  CheckCircle2,
-  Sparkles,
-  TrendingUp,
-  ShieldAlert,
-} from "lucide-react";
-import { DisclaimerNotice } from "@/components/ui/DisclaimerNotice";
+import { Upload, ArrowRight, Check, AlertCircle } from "lucide-react";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 
 export default function HomePage() {
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col">
-      {/* Top Banner for Evaluators */}
-      <section className="bg-gradient-to-r from-teal-950/40 via-slate-900/60 to-teal-950/40 border-b border-teal-900/30 py-2.5 px-4 text-center">
-        <p className="text-xs text-teal-300 font-medium inline-flex items-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-          <span>Longitudinal Lab Tracking: Turn complex test results into clear, visual trends.</span>
-          <Link
-            href="/dashboard"
-            className="text-white underline underline-offset-4 hover:text-teal-200 ml-1 font-semibold"
-          >
-            Go to Dashboard →
-          </Link>
-        </p>
-      </section>
+    <div className="bg-canvas text-ink py-10 sm:py-14">
+      <div className="max-w-container mx-auto px-4 sm:px-6 space-y-16">
+        {/* Hero Section: 2-Column on Desktop */}
+        <section
+          aria-labelledby="hero-heading"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start"
+        >
+          {/* Left Column: Headline, Description, CTA */}
+          <div className="lg:col-span-6 space-y-6">
+            <div className="space-y-4">
+              <h1
+                id="hero-heading"
+                className="font-serif font-semibold text-3xl sm:text-4xl text-ink tracking-tight leading-tight"
+              >
+                Understand your medical report in plain language.
+              </h1>
+              <p className="text-base sm:text-lg text-ink-muted leading-relaxed">
+                Upload a lab or medical report. H2 explains each result in simple
+                words and points out what to ask your doctor.
+              </p>
+            </div>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        {/* Subtle background glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="space-y-3 pt-2">
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  href="/upload"
+                  className="inline-flex items-center justify-center gap-2 min-h-target px-6 py-2.5 rounded-control bg-brand hover:bg-brand-hover text-surface font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                >
+                  <Upload className="w-4 h-4" aria-hidden="true" />
+                  <span>Upload a report</span>
+                </Link>
 
-        <div className="text-center max-w-3xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-teal-300 text-xs font-semibold mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-teal-400" />
-            <span>H2 • AI Medical Report Simplifier</span>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center gap-2 min-h-target px-5 py-2.5 rounded-control bg-surface hover:bg-surface-subtle text-ink border border-border-strong font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                >
+                  <span>Go to dashboard</span>
+                  <ArrowRight className="w-4 h-4 text-ink-muted" aria-hidden="true" />
+                </Link>
+              </div>
+
+              <p className="text-xs text-ink-muted">
+                Accepts PDF, JPG, JPEG, or PNG up to 25 MB.
+              </p>
+            </div>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
-            Understand your medical reports.{" "}
-            <span className="bg-gradient-to-r from-teal-300 via-teal-400 to-cyan-300 bg-clip-text text-transparent">
-              Clearly.
-            </span>
-          </h1>
-
-          <p className="mt-6 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Upload a medical report and turn complex test results into simple, visual insights.
-          </p>
-
-          {/* Primary & Secondary CTAs */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
-            <Link
-              href="/upload"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-semibold text-sm shadow-lg shadow-teal-950/40 hover:shadow-teal-900/50 transition-all active:scale-[0.98]"
+          {/* Right Column: Static Fictional Example Preview */}
+          <div className="lg:col-span-6">
+            <div
+              className="rounded-panel border border-border bg-surface p-6 space-y-5"
+              aria-label="Example report preview"
             >
-              <Upload className="w-4 h-4" />
-              <span>Upload Report</span>
-            </Link>
-
-            <Link
-              href="/dashboard"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 hover:text-white border border-slate-700/80 font-medium text-sm transition-all"
-            >
-              <span>View Dashboard</span>
-              <ArrowRight className="w-4 h-4 text-slate-400" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Visual Journey: Report → Analysis → Insights */}
-        <div className="mt-16 md:mt-20 max-w-4xl mx-auto">
-          <div className="text-center mb-6">
-            <span className="text-xs uppercase font-semibold tracking-wider text-slate-400">
-              The H2 Pipeline
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
-            {/* Step 1 */}
-            <div className="p-5 rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm relative group hover:border-slate-700 transition-all">
-              <div className="w-10 h-10 rounded-lg bg-teal-950/80 border border-teal-800/60 flex items-center justify-center text-teal-300 mb-3.5">
-                <FileText className="w-5 h-5" />
-              </div>
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="text-sm font-semibold text-white">1. Document Understanding</h3>
-                <span className="text-[10px] text-teal-400 font-mono font-medium">AI OCR</span>
-              </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Extracts lab metrics, units, values, and reference boundaries from PDFs or lab photos into structured data.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="p-5 rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm relative group hover:border-slate-700 transition-all">
-              <div className="w-10 h-10 rounded-lg bg-indigo-950/80 border border-indigo-800/60 flex items-center justify-center text-indigo-300 mb-3.5">
-                <Cpu className="w-5 h-5" />
-              </div>
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="text-sm font-semibold text-white">2. Historical ML Analysis</h3>
-                <span className="text-[10px] text-indigo-400 font-mono font-medium">Our ML Model</span>
-              </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Cross-references past lab checkups to detect subtle trajectory shifts and unexpected trend anomalies.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="p-5 rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm relative group hover:border-slate-700 transition-all">
-              <div className="w-10 h-10 rounded-lg bg-emerald-950/80 border border-emerald-800/60 flex items-center justify-center text-emerald-300 mb-3.5">
-                <LineChart className="w-5 h-5" />
-              </div>
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="text-sm font-semibold text-white">3. Clear Visual Insights</h3>
-                <span className="text-[10px] text-emerald-400 font-mono font-medium">Patient Clarity</span>
-              </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Explains results plainly with interactive trendlines without alarmist or diagnostic terminology.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* First 30-Seconds Hook: Interactive Micro-Preview */}
-        <div className="mt-14 max-w-4xl mx-auto">
-          <div className="rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-6 md:p-8 shadow-2xl">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-6 border-b border-slate-800/80">
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-teal-400">
-                  Live Preview • Longitudinal Analysis
-                </span>
-                <h2 className="text-lg font-bold text-white mt-0.5">
-                  Fasting Glucose Across 4 Quarters
-                </h2>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-950/80 border border-amber-800/80 text-amber-300 inline-flex items-center gap-1.5">
-                  <TrendingUp className="w-3.5 h-3.5" />
-                  Increasing trend detected
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              {/* Historical progression */}
-              <div className="space-y-3">
-                <p className="text-xs font-medium text-slate-400">Quarterly Values Tracked by H2:</p>
-                <div className="grid grid-cols-4 gap-2">
-                  <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-800 text-center">
-                    <span className="text-[11px] text-slate-400 block">Jan</span>
-                    <span className="text-sm font-bold text-slate-200">91</span>
-                    <span className="text-[10px] text-slate-400 block">mg/dL</span>
-                  </div>
-                  <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-800 text-center">
-                    <span className="text-[11px] text-slate-400 block">Apr</span>
-                    <span className="text-sm font-bold text-slate-200">94</span>
-                    <span className="text-[10px] text-slate-400 block">mg/dL</span>
-                  </div>
-                  <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-800 text-center">
-                    <span className="text-[11px] text-slate-400 block">Jul</span>
-                    <span className="text-sm font-bold text-slate-200">98</span>
-                    <span className="text-[10px] text-slate-400 block">mg/dL</span>
-                  </div>
-                  <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/50 text-center">
-                    <span className="text-[11px] text-amber-300 block">Sep</span>
-                    <span className="text-sm font-bold text-amber-200">109</span>
-                    <span className="text-[10px] text-amber-300/80 block">mg/dL</span>
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-slate-800/30 border border-slate-800/60 text-xs text-slate-300 leading-relaxed">
-                  <span className="font-semibold text-white">Why this matters:</span> A single static report only shows 109 mg/dL. H2 reveals the gradual shift from 91 to 109 mg/dL across your available reports.
-                </div>
-              </div>
-
-              {/* What H2 generates */}
-              <div className="rounded-xl bg-slate-800/30 border border-slate-800/70 p-4 space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400 font-medium">Standard Reference Range</span>
-                  <span className="text-slate-200 font-mono">70 – 99 mg/dL</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400 font-medium">Reported Current Value</span>
-                  <span className="text-amber-300 font-mono font-bold">109 mg/dL</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400 font-medium">Net Trajectory</span>
-                  <span className="text-amber-300 font-mono font-medium">+18 mg/dL over 4 reports</span>
-                </div>
-
-                <div className="pt-2 border-t border-slate-800">
-                  <span className="text-[11px] text-slate-400 block uppercase font-medium">
-                    Plain-Language Explanation:
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+                    Report Preview
                   </span>
-                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                    &ldquo;Your reported values have shown an increasing trend across the available reports, moving from within reference range to slightly above the threshold.&rdquo;
+                  <p className="font-serif font-semibold text-base text-ink">
+                    Routine Blood Panel
                   </p>
                 </div>
+                <span className="self-start sm:self-auto px-2 py-0.5 rounded-chip text-xs bg-surface-subtle border border-border text-ink-muted font-medium">
+                  Example, not real patient data
+                </span>
+              </div>
 
-                <div className="pt-2">
-                  <Link
-                    href="/tests/fasting-glucose"
-                    className="inline-flex items-center gap-1.5 text-xs text-teal-400 hover:text-teal-300 font-medium"
-                  >
-                    <span>Inspect interactive chart view</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+              {/* Test List */}
+              <div className="space-y-2.5">
+                {/* Test 1 */}
+                <div className="p-3 rounded-control bg-surface-subtle border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 text-xs">
+                  <div>
+                    <span className="font-medium text-ink block">
+                      Fasting Blood Glucose
+                    </span>
+                    <span className="text-ink-muted">Ref: 70 – 99 mg/dL</span>
+                  </div>
+                  <div className="flex items-center justify-between sm:justify-end gap-3 pt-1 sm:pt-0 border-t sm:border-t-0 border-border/50">
+                    <span className="font-medium tabular-nums text-ink text-sm">
+                      108 mg/dL
+                    </span>
+                    <StatusBadge status="above_range" />
+                  </div>
+                </div>
+
+                {/* Test 2 */}
+                <div className="p-3 rounded-control bg-surface-subtle border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 text-xs">
+                  <div>
+                    <span className="font-medium text-ink block">
+                      Serum Potassium
+                    </span>
+                    <span className="text-ink-muted">Ref: 3.5 – 5.0 mmol/L</span>
+                  </div>
+                  <div className="flex items-center justify-between sm:justify-end gap-3 pt-1 sm:pt-0 border-t sm:border-t-0 border-border/50">
+                    <span className="font-medium tabular-nums text-ink text-sm">
+                      4.2 mmol/L
+                    </span>
+                    <StatusBadge status="within_range" />
+                  </div>
+                </div>
+
+                {/* Test 3 */}
+                <div className="p-3 rounded-control bg-surface-subtle border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 text-xs">
+                  <div>
+                    <span className="font-medium text-ink block">
+                      Total Cholesterol
+                    </span>
+                    <span className="text-ink-muted">Ref: 125 – 200 mg/dL</span>
+                  </div>
+                  <div className="flex items-center justify-between sm:justify-end gap-3 pt-1 sm:pt-0 border-t sm:border-t-0 border-border/50">
+                    <span className="font-medium tabular-nums text-ink text-sm">
+                      195 mg/dL
+                    </span>
+                    <StatusBadge status="within_range" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Plain-Language Callout */}
+              <div className="p-4 rounded-control bg-surface-subtle border border-border space-y-2 text-xs leading-relaxed">
+                <div>
+                  <span className="font-semibold text-ink block">
+                    Plain-language explanation
+                  </span>
+                  <p className="text-ink-muted mt-1">
+                    Your fasting glucose of 108 mg/dL is slightly above the
+                    typical reference range. Potassium and total cholesterol are
+                    both within normal boundaries.
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-border">
+                  <span className="font-semibold text-ink block">
+                    Questions for your doctor
+                  </span>
+                  <p className="text-ink-muted mt-0.5">
+                    &ldquo;Should we recheck my fasting glucose at my next routine
+                    visit, or consider any dietary adjustments?&rdquo;
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Responsible AI Notice */}
-        <div className="mt-12 max-w-2xl mx-auto">
-          <DisclaimerNotice />
-        </div>
-      </section>
+        {/* How H2 Works: 3 Plain Numbered Steps */}
+        <section aria-labelledby="how-it-works-heading" className="space-y-6">
+          <div className="border-t border-border pt-10">
+            <h2
+              id="how-it-works-heading"
+              className="font-serif font-semibold text-2xl text-ink"
+            >
+              How it works
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-5 rounded-panel border border-border bg-surface space-y-2">
+              <span className="text-xs font-semibold text-brand">01</span>
+              <h3 className="font-semibold text-base text-ink">
+                Upload your report
+              </h3>
+              <p className="text-xs text-ink-muted leading-relaxed">
+                Select a document from your device in PDF, JPG, JPEG, or PNG
+                format (up to 25 MB).
+              </p>
+            </div>
+
+            <div className="p-5 rounded-panel border border-border bg-surface space-y-2">
+              <span className="text-xs font-semibold text-brand">02</span>
+              <h3 className="font-semibold text-base text-ink">
+                H2 reads and simplifies it
+              </h3>
+              <p className="text-xs text-ink-muted leading-relaxed">
+                H2 reads test names, measured values, and reference boundaries
+                from your document and organizes them clearly.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-panel border border-border bg-surface space-y-2">
+              <span className="text-xs font-semibold text-brand">03</span>
+              <h3 className="font-semibold text-base text-ink">
+                Review findings
+              </h3>
+              <p className="text-xs text-ink-muted leading-relaxed">
+                Read plain-language explanations, compare against past results,
+                and review prepared questions for your next appointment.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* What You'll Get & What H2 Doesn't Do */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+          {/* Features */}
+          <div className="rounded-panel border border-border bg-surface p-6 space-y-4">
+            <h2 className="font-serif font-semibold text-xl text-ink">
+              What you will get
+            </h2>
+            <ul className="space-y-3 text-xs text-ink-muted">
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 text-brand shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">Plain-language summaries:</strong>{" "}
+                  Clear overviews translating medical terminology into understandable prose.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 text-brand shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">Reference ranges:</strong>{" "}
+                  Factual comparison showing whether each test is in range or outside range.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 text-brand shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">Simple test descriptions:</strong>{" "}
+                  Concise explanations of what each test measures in the body.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 text-brand shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">Track results over time:</strong>{" "}
+                  Visual charts and timeline comparisons across past reports.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 text-brand shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">Side-by-side comparison:</strong>{" "}
+                  Direct differential view between any two reports.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 text-brand shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">Dashboard:</strong>{" "}
+                  see all your reports in one place.
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Boundaries */}
+          <div className="rounded-panel border border-border bg-surface p-6 space-y-4">
+            <h2 className="font-serif font-semibold text-xl text-ink">
+              What H2 does not do
+            </h2>
+            <ul className="space-y-3 text-xs text-ink-muted">
+              <li className="flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-ink-muted shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">No medical diagnosis:</strong>{" "}
+                  H2 does not identify or diagnose diseases, conditions, or illnesses.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-ink-muted shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">No treatment advice:</strong>{" "}
+                  H2 does not prescribe medication, suggest treatments, or modify dosages.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-ink-muted shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">No clinical substitute:</strong>{" "}
+                  This tool cannot replace evaluation, advice, or care from a licensed healthcare provider.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-ink-muted shrink-0 mt-0.5" aria-hidden="true" />
+                <span>
+                  <strong className="text-ink font-semibold">Summaries can contain mistakes:</strong>{" "}
+                  Automated summaries may contain inaccuracies. Always verify important values directly with your physician.
+                </span>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
