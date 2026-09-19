@@ -23,27 +23,27 @@ interface StepItem {
 const STEPS: StepItem[] = [
   {
     id: 1,
-    label: "Reading and preprocessing report document",
+    label: "Reading report",
     detail: "Parsing document structure, normalizing OCR coordinates, and validating format integrity",
     badge: "Document Ingestion",
   },
   {
     id: 2,
-    label: "Extracting test values & reference ranges",
+    label: "Extracting information & test results",
     detail: "Converting unstructured clinical text into structured lab metrics (Fasting Glucose, Hemoglobin, Vitamin D, etc.)",
-    badge: "AI Document Understanding",
+    badge: "AI Extraction",
   },
   {
     id: 3,
-    label: "Analyzing historical longitudinal trends",
-    detail: "Cross-matching with 3 prior quarterly panels to calculate multi-period rate of change and anomaly markers",
-    badge: "Historical ML Model",
+    label: "Analyzing historical trends",
+    detail: "Cross-matching with prior quarterly panels to calculate multi-period rate of change and anomaly markers",
+    badge: "Historical ML",
   },
   {
     id: 4,
-    label: "Preparing plain-language patient insights",
-    detail: "Formulating clear, non-diagnostic natural summaries and visual delta comparisons",
-    badge: "Insight Generation",
+    label: "Preparing your simplified report",
+    detail: "Formulating plain-language explanations, key findings, and longitudinal trend summaries",
+    badge: "Simplified Report",
   },
 ];
 
@@ -98,7 +98,7 @@ export function ProcessingPipeline({
   }, [onComplete]);
 
   const handleNavigate = () => {
-    router.push("/reports/rep-001");
+    router.push("/simplified/rep-001");
   };
 
   return (
@@ -195,8 +195,8 @@ export function ProcessingPipeline({
       <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="text-xs text-slate-400">
           {completed
-            ? "Extraction and historical trend analysis complete. Ready to review findings."
-            : "Simulating backend processing with frontend mock state..."}
+            ? "Report analyzed successfully. Your simplified report is ready to review."
+            : "Simulating document understanding and longitudinal trend analysis..."}
         </div>
 
         <Button
@@ -207,7 +207,7 @@ export function ProcessingPipeline({
           className="w-full sm:w-auto"
         >
           <Sparkles className="w-4 h-4" />
-          <span>View Report Results</span>
+          <span>View Simplified Report</span>
           <ArrowRight className="w-4 h-4" />
         </Button>
       </div>
