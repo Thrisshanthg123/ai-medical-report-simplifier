@@ -6,6 +6,7 @@ import { ReportHeader } from "@/components/reports/ReportHeader";
 import { ReportSummaryBanner } from "@/components/reports/ReportSummaryBanner";
 import { ReportViewToggle } from "@/components/reports/ReportViewToggle";
 import { DisclaimerNotice } from "@/components/ui/DisclaimerNotice";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 interface ReportPageProps {
   params: Promise<{
@@ -37,30 +38,32 @@ export default async function ReportDetailPage({ params }: ReportPageProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Report Header Metadata */}
-      <ReportHeader report={report} />
+    <ProtectedRoute>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Report Header Metadata */}
+        <ReportHeader report={report} />
 
-      {/* AI & ML Executive Summary Banner */}
-      <ReportSummaryBanner summary={report.summary} />
+        {/* AI & ML Executive Summary Banner */}
+        <ReportSummaryBanner summary={report.summary} />
 
-      {/* Section Title */}
-      <div className="flex items-center justify-between pt-2">
-        <div>
-          <h2 className="text-xl font-bold text-white tracking-tight">
-            Extracted Test Results
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Individual biomarkers parsed from document and compared with reference intervals
-          </p>
+        {/* Section Title */}
+        <div className="flex items-center justify-between pt-2">
+          <div>
+            <h2 className="text-xl font-bold text-white tracking-tight">
+              Extracted Test Results
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Individual biomarkers parsed from document and compared with reference intervals
+            </p>
+          </div>
         </div>
+
+        {/* Interactive View: Cards or Table */}
+        <ReportViewToggle tests={report.tests} />
+
+        {/* Responsible AI Disclaimer */}
+        <DisclaimerNotice />
       </div>
-
-      {/* Interactive View: Cards or Table */}
-      <ReportViewToggle tests={report.tests} />
-
-      {/* Responsible AI Disclaimer */}
-      <DisclaimerNotice />
-    </div>
+    </ProtectedRoute>
   );
 }

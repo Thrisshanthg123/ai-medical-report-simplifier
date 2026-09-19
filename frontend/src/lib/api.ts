@@ -5,6 +5,7 @@ import {
   ReportSummary,
   ReportComparisonItem,
 } from "@/types/medical";
+import { supabase } from "@/lib/supabase";
 
 function getBaseUrl(): string {
   if (typeof window !== "undefined") {
@@ -16,14 +17,50 @@ function getBaseUrl(): string {
   return `http://localhost:${process.env.PORT || 3000}`;
 }
 
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  if (typeof window !== "undefined") {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        return { Authorization: `Bearer ${session.access_token}` };
+      }
+    } catch {
+      // Fallback if session unavailable
+    }
+  } else {
+    try {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      const token = cookieStore.get("sb-access-token")?.value;
+      const headersMap: Record<string, string> = {
+        cookie: cookieStore.toString(),
+      };
+      if (token) {
+        headersMap["Authorization"] = `Bearer ${token}`;
+      }
+      return headersMap;
+    } catch {
+      // Fallback
+    }
+  }
+  return {};
+}
+
 export async function uploadMedicalReport(
   file: File
 ): Promise<{ report_id: string; message: string; report: MedicalReport }> {
   const formData = new FormData();
   formData.append("file", file);
 
+  const authHeaders = await getAuthHeaders();
+
   const res = await fetch(`${getBaseUrl()}/api/reports/upload`, {
     method: "POST",
+    headers: {
+      ...authHeaders,
+    },
     body: formData,
   });
 
@@ -32,7 +69,9 @@ export async function uploadMedicalReport(
   try {
     errData = text ? JSON.parse(text) : {};
   } catch {
-    errData = { error: `Server returned non-JSON response (status ${res.status}): ${text.slice(0, 100)}` };
+    errData = {
+      error: `Server returned non-JSON response (status ${res.status}): ${text.slice(0, 100)}`,
+    };
   }
 
   if (!res.ok) {
@@ -43,7 +82,12 @@ export async function uploadMedicalReport(
 
 export async function getReports(): Promise<MedicalReport[]> {
   try {
+    const authHeaders = await getAuthHeaders();
+
     const res = await fetch(`${getBaseUrl()}/api/reports`, {
+      headers: {
+        ...authHeaders,
+      },
       cache: "no-store",
     });
     if (!res.ok) {
@@ -60,7 +104,12 @@ export async function getReports(): Promise<MedicalReport[]> {
 
 export async function getReport(id: string): Promise<MedicalReport | null> {
   try {
+    const authHeaders = await getAuthHeaders();
+
     const res = await fetch(`${getBaseUrl()}/api/reports/${id}`, {
+      headers: {
+        ...authHeaders,
+      },
       cache: "no-store",
     });
     if (!res.ok) {
@@ -79,7 +128,12 @@ export async function getTestHistory(
   slug: string
 ): Promise<{ test: MedicalTest; history: HistoricalValue[] } | null> {
   try {
+    const authHeaders = await getAuthHeaders();
+
     const res = await fetch(`${getBaseUrl()}/api/tests/${slug}/history`, {
+      headers: {
+        ...authHeaders,
+      },
       cache: "no-store",
     });
     if (!res.ok) {

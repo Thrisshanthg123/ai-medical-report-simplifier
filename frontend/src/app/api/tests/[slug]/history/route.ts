@@ -1,12 +1,22 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import { getHistoricalTestValues, supabase } from "@/lib/supabase";
+import { NextRequest, NextResponse } from "next/server";
+import { getHistoricalTestValues } from "@/lib/supabase";
+import { getAuthenticatedUser } from "@/lib/auth-server";
 import type { MedicalTest } from "@/types/medical";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const auth = await getAuthenticatedUser(request);
+    if (!auth) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized: Please log in." },
+        { status: 401 }
+      );
+    }
+    const { user, supabaseClient } = auth;
+
     const { slug } = await context.params;
 
     if (!slug) {
@@ -16,8 +26,8 @@ export async function GET(
       );
     }
 
-    // Fetch historical values ordered chronologically
-    const history = await getHistoricalTestValues(slug);
+    // Fetch historical values ordered chronologically for this authenticated user
+    const history = await getHistoricalTestValues(slug, user.id, supabaseClient);
 
     if (history.length === 0) {
       return NextResponse.json(
@@ -26,11 +36,12 @@ export async function GET(
       );
     }
 
-    // Fetch the most recent test record to get test metadata
-    const { data: testRows, error: testErr } = await supabase
+    // Fetch the most recent test record belonging to this user to get test metadata
+    const { data: testRows, error: testErr } = await supabaseClient
       .from("tests")
-      .select("*")
+      .select("*, reports!inner(user_id)")
       .eq("slug", slug)
+      .eq("reports.user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(1);
 
