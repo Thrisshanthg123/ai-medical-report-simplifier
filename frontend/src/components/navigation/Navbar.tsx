@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Activity,
   Upload,
@@ -11,9 +11,12 @@ import {
   GitCompare,
   Menu,
   X,
-  FileText,
+  LogOut,
+  LogIn,
+  User as UserIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -24,7 +27,14 @@ const NAV_ITEMS = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, signOut, loading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/login");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
@@ -63,18 +73,18 @@ export function Navbar() {
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
                   isActive
-                    ? "bg-slate-800 text-teal-300 shadow-inner"
-                    : "text-slate-300 hover:text-white hover:bg-slate-800/50"
+                    ? "bg-teal-50 text-teal-800 border border-teal-200/80 font-semibold"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                 )}
               >
-                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-teal-400" : "text-slate-400")} />
+                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-teal-600" : "text-slate-400")} />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Primary CTA */}
+        {/* Primary CTA / Auth Actions */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/upload"
@@ -83,6 +93,45 @@ export function Navbar() {
             <Upload className="w-3.5 h-3.5" />
             <span>Upload Report</span>
           </Link>
+
+          {!loading && (
+            <>
+              {user ? (
+                <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-300 max-w-[140px] truncate" title={user.email}>
+                    <div className="w-6 h-6 rounded-full bg-teal-950 border border-teal-800/80 flex items-center justify-center text-teal-300 shrink-0">
+                      <UserIcon className="w-3 h-3" />
+                    </div>
+                    <span className="truncate">{user.email?.split("@")[0]}</span>
+                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    className="p-2 rounded-lg text-slate-400 hover:text-rose-300 hover:bg-rose-950/40 transition-colors"
+                    title="Sign Out"
+                    aria-label="Sign Out"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                  >
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>Log In</span>
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-700 text-slate-200 hover:border-slate-600 hover:text-white transition-colors"
+                  >
+                    <span>Sign Up</span>
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         {/* Mobile menu trigger */}
@@ -97,7 +146,7 @@ export function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="md:hidden border-b border-slate-800 bg-slate-900/95 px-4 pt-2 pb-4 space-y-1">
+        <div className="md:hidden border-b border-slate-800 bg-slate-900/95 px-4 pt-2 pb-4 space-y-2">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -122,7 +171,8 @@ export function Navbar() {
               </Link>
             );
           })}
-          <div className="pt-2">
+
+          <div className="pt-2 border-t border-slate-800 space-y-2">
             <Link
               href="/upload"
               onClick={() => setMobileOpen(false)}
@@ -131,6 +181,42 @@ export function Navbar() {
               <Upload className="w-4 h-4" />
               <span>Upload Report</span>
             </Link>
+
+            {user ? (
+              <div className="pt-2 space-y-2">
+                <div className="px-3 py-1.5 text-xs text-slate-400 truncate">
+                  Signed in as <span className="text-slate-200 font-medium">{user.email}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    handleSignOut();
+                  }}
+                  className="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-rose-950/40 border border-rose-800/60 text-rose-300 font-medium text-sm"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-slate-800 text-slate-200 text-xs font-medium"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Log In</span>
+                </Link>
+                <Link
+                  href="/signup"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center gap-1.5 py-2 rounded-lg border border-slate-700 text-slate-200 text-xs font-medium text-center"
+                >
+                  <span>Sign Up</span>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}

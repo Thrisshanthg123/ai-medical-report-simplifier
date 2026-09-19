@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/navigation/Navbar";
 import { Footer } from "@/components/navigation/Footer";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "H2 — AI Medical Report Simplifier",
@@ -15,11 +16,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark h-full">
-      <body className="bg-[#0a0f18] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-teal-500/30 selection:text-teal-200">
-        <Navbar />
-        <main className="flex-1 w-full">{children}</main>
-        <Footer />
+    <html lang="en" className="light h-full">
+      <body className="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-teal-500/20 selection:text-teal-800">
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-1 w-full">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

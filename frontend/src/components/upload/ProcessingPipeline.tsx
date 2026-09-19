@@ -10,6 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { uploadMedicalReport } from "@/lib/api";
 
 interface StepItem {
   id: number;
@@ -93,33 +94,10 @@ export function ProcessingPipeline({
         await new Promise((r) => setTimeout(r, 400));
         setCurrentStep(2);
 
-        const response = await fetch("/api/reports/upload", {
-          method: "POST",
-          body: formData,
-        });
+        const data = await uploadMedicalReport(file);
 
         // Step 3: Historical ML (show while processing response)
         setCurrentStep(3);
-
-        const text = await response.text();
-        let data: any = {};
-        try {
-          data = text ? JSON.parse(text) : {};
-        } catch {
-          throw new Error(
-            `Server returned non-JSON response (status ${response.status}). ${
-              text ? text.slice(0, 150) : "Empty response body."
-            }`
-          );
-        }
-
-        if (!response.ok || !data.success) {
-          const serverError =
-            data.error ||
-            data.message ||
-            `Upload failed with status ${response.status}`;
-          throw new Error(serverError);
-        }
 
         // Step 4: Saving to database
         setCurrentStep(4);

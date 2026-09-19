@@ -2,6 +2,7 @@ import React from "react";
 import { notFound } from "next/navigation";
 import { getReport, getReports } from "@/lib/api";
 import { SimplifiedReportView } from "@/components/simplified/SimplifiedReportView";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 interface SimplifiedPageProps {
   params: Promise<{
@@ -35,8 +36,10 @@ export default async function SimplifiedReportPage({
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <SimplifiedReportView report={report} />
-    </div>
+    <ProtectedRoute>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <SimplifiedReportView report={report} />
+      </div>
+    </ProtectedRoute>
   );
 }

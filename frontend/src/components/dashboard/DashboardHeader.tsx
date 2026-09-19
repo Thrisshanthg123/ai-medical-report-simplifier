@@ -11,7 +11,7 @@ export function DashboardHeader() {
           <span className="text-xs font-semibold uppercase tracking-wider text-teal-400">
             Health Overview
           </span>
-          <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full border border-slate-700">
+          <span className="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full border border-slate-200 font-medium">
             Demo Profile: Alex Morgan
           </span>
         </div>

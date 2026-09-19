@@ -22,6 +22,7 @@ import { validateMedicalReportFile } from "@/lib/file-validation";
 import { saveReport, saveTests, getHistoricalTestValues } from "@/lib/supabase";
 import type { SaveTestInput } from "@/lib/supabase";
 import type { TestStatus, TrendDirection, HistoricalValue } from "@/types/medical";
+import { getAuthenticatedUser } from "@/lib/auth-server";
 
 // ---------------------------------------------------------------------------
 // Determine TestStatus from value vs reference range
@@ -65,6 +66,16 @@ function computeChange(currentValue: number, history: HistoricalValue[]) {
 // ---------------------------------------------------------------------------
 export async function POST(request: NextRequest) {
   try {
+    // 0. Verify authenticated user
+    const auth = await getAuthenticatedUser(request);
+    if (!auth) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized: Please log in to upload reports." },
+        { status: 401 }
+      );
+    }
+    const { user, supabaseClient } = auth;
+
     // 1. Parse multipart form data
     const formData = await request.formData().catch(() => null);
     if (!formData) {
@@ -111,18 +122,18 @@ export async function POST(request: NextRequest) {
         : "image/jpeg"
     ) as "application/pdf" | "image/jpeg" | "image/png";
 
-    console.log(`[upload] Processing "${file.name}" (${file.size} bytes, ${mimeType})`);
+    console.log(`[upload] Processing "${file.name}" (${file.size} bytes, ${mimeType}) for user ${user.id}`);
 
     // 4. Extract structured data with Gemini
     const extractedReport = await extractMedicalReport(fileBuffer, mimeType, file.name);
     console.log(`[upload] Extracted ${extractedReport.tests.length} tests from "${file.name}"`);
 
-    // 5. Fetch historical values from Supabase for each unique test slug
+    // 5. Fetch historical values from Supabase for each unique test slug for this user
     const historicalMap = new Map<string, HistoricalValue[]>();
     await Promise.all(
       extractedReport.tests.map(async (test) => {
         try {
-          const history = await getHistoricalTestValues(test.slug);
+          const history = await getHistoricalTestValues(test.slug, user.id, supabaseClient);
           historicalMap.set(test.slug, history);
         } catch {
           historicalMap.set(test.slug, []);
@@ -185,19 +196,23 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    // 8. Save report to Supabase
-    const reportId = await saveReport({
-      report_name: extractedReport.report_name,
-      report_date: extractedReport.date,
-      provider_or_lab: extractedReport.provider_or_lab,
-      status: "analyzed",
-      summary_overview: buildSummaryOverview(testInputs),
-      key_takeaways: buildKeyTakeaways(testInputs),
-    });
+    // 8. Save report to Supabase with authenticated user.id
+    const reportId = await saveReport(
+      {
+        user_id: user.id,
+        report_name: extractedReport.report_name,
+        report_date: extractedReport.date,
+        provider_or_lab: extractedReport.provider_or_lab,
+        status: "analyzed",
+        summary_overview: buildSummaryOverview(testInputs),
+        key_takeaways: buildKeyTakeaways(testInputs),
+      },
+      supabaseClient
+    );
 
     // 9. Save tests to Supabase
-    const savedTests = await saveTests(reportId, testInputs);
-    console.log(`[upload] Saved report ${reportId} with ${savedTests.length} tests`);
+    const savedTests = await saveTests(reportId, testInputs, supabaseClient);
+    console.log(`[upload] Saved report ${reportId} for user ${user.id} with ${savedTests.length} tests`);
 
     // 10. Build full report response
     const withinRange = savedTests.filter((t) => t.status === "within_range").length;
