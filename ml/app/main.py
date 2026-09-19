@@ -1,6 +1,9 @@
 from typing import List, Union, Dict, Any
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+import sys
+import os
+import tempfile
 
 from app.schemas import (
     TestInput,
@@ -17,13 +20,16 @@ from app.trend import calculate_trend
 from app.anomaly import detect_anomaly
 from app.reference_range import analyze_reference_range
 
+# Let Python find the "ocr" folder, which lives at the project root
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+from ocr.extractor import extract_text
+
 app = FastAPI(
     title="AI Medical Report Simplifier - ML Analysis Service",
     description="Feature engineering, trend analysis, statistical anomaly detection, and reference range analysis for historical medical test data.",
     version="1.0.0",
 )
 
-# Enable CORS for backend/frontend consumption
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -33,19 +39,11 @@ app.add_middleware(
 )
 
 def run_ml_pipeline(test_input: TestInput) -> MLFindingsOutput:
-    """
-    Executes the complete ML Analysis Pipeline:
-    Input -> Feature Engineering -> Trend Analysis -> Anomaly Detection -> Reference Range Analysis -> Findings JSON
-    """
     clean_values, stats, change, current_val, prev_val, n = calculate_feature_statistics(test_input.values)
     
-    # 1. Trend Analysis
     trend_res = calculate_trend(clean_values)
-    
-    # 2. Anomaly Detection
     anomaly_res = detect_anomaly(clean_values)
     
-    # 3. Reference Range Analysis
     ref_min = test_input.reference_range.min if test_input.reference_range else None
     ref_max = test_input.reference_range.max if test_input.reference_range else None
     ref_res = analyze_reference_range(current_val, ref_min, ref_max)
@@ -79,11 +77,28 @@ def run_ml_pipeline(test_input: TestInput) -> MLFindingsOutput:
 def health_check():
     return {"status": "healthy", "service": "ML Analysis Service"}
 
+@app.post("/extract-text")
+async def extract_text_from_upload(file: UploadFile = File(...)):
+    """
+    Accepts an uploaded medical report (image or PDF) and returns
+    the raw text extracted via OCR.
+    """
+    suffix = os.path.splitext(file.filename)[1]
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        contents = await file.read()
+        tmp.write(contents)
+        tmp_path = tmp.name
+
+    try:
+        extracted_text = extract_text(tmp_path)
+        return {"filename": file.filename, "extracted_text": extracted_text}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        os.remove(tmp_path)
+
 @app.post("/analyze", response_model=MLFindingsOutput)
 def analyze_test(payload: TestInput):
-    """
-    Analyzes a single medical test series.
-    """
     try:
         return run_ml_pipeline(payload)
     except Exception as e:
@@ -91,9 +106,6 @@ def analyze_test(payload: TestInput):
 
 @app.post("/analyze/batch", response_model=List[MLFindingsOutput])
 def analyze_batch(payload: Union[BatchAnalysisInput, List[TestInput]]):
-    """
-    Analyzes multiple medical test series in batch.
-    """
     try:
         tests = payload.tests if isinstance(payload, BatchAnalysisInput) else payload
         return [run_ml_pipeline(test_item) for test_item in tests]

@@ -433,4 +433,4 @@ export async function saveTests(
   }
 
   return (data as DbTestRow[]).map(mapDbTestToMedicalTest);
-}
+}
