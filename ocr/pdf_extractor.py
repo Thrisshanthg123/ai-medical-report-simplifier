@@ -3,13 +3,16 @@ Handles text extraction for PDF files.
 
 Tries the embedded text layer first (fast, no OCR needed for
 digitally-generated PDFs). Falls back to OCR on any page that has no
-text layer (i.e. a scanned page saved as an image inside the PDF).
+text layer (i.e. a scanned page saved as an image inside the PDF),
+applying the same lightweight preprocessing used for standalone images.
 """
 
 import io
 import fitz  # PyMuPDF
 from PIL import Image
 import pytesseract
+
+from .image_extractor import preprocess_image
 
 
 def extract_text_from_pdf(pdf_path: str) -> str:
@@ -32,8 +35,9 @@ def extract_text_from_pdf(pdf_path: str) -> str:
 
 
 def _ocr_page(page) -> str:
-    """Render a single PDF page as an image and run OCR on it."""
+    """Render a single PDF page as an image, preprocess it, and run OCR."""
     pix = page.get_pixmap(dpi=300)
     img_bytes = pix.tobytes("png")
     image = Image.open(io.BytesIO(img_bytes))
-    return pytesseract.image_to_string(image).strip()
+    cleaned = preprocess_image(image)
+    return pytesseract.image_to_string(cleaned).strip()
