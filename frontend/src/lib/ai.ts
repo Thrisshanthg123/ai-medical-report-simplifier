@@ -139,28 +139,87 @@ export async function extractMedicalReport(
     return getMockExtractedReport(fileName);
   }
   const base64Data = fileBuffer.toString("base64");
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: [
-      {
-        parts: [
-          {
-            inlineData: {
-              mimeType: normalizedMime,
-              data: base64Data,
+  const candidateModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
+  let response: any = null;
+  let lastError: unknown = null;
+
+  for (const model of candidateModels) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        console.log(`[ai] Requesting extraction via "${model}" (attempt ${attempt})...`);
+        response = await ai.models.generateContent({
+          model,
+          contents: [
+            {
+              parts: [
+                {
+                  inlineData: {
+                    mimeType: normalizedMime,
+                    data: base64Data,
+                  },
+                },
+                {
+                  text: EXTRACTION_PROMPT,
+                },
+              ],
             },
+          ],
+          config: {
+            temperature: 0,
+            responseMimeType: "application/json",
           },
-          {
-            text: EXTRACTION_PROMPT,
-          },
-        ],
-      },
-    ],
-    config: {
-      temperature: 0,
-      responseMimeType: "application/json",
-    },
-  });
+        });
+        break; // Successfully got response
+      } catch (err: any) {
+        lastError = err;
+        const errMsg = err?.message || String(err);
+        const isTransient =
+          errMsg.includes("503") ||
+          errMsg.includes("UNAVAILABLE") ||
+          errMsg.includes("high demand") ||
+          errMsg.includes("429") ||
+          errMsg.includes("RESOURCE_EXHAUSTED");
+
+        console.warn(
+          `[ai] Model "${model}" attempt ${attempt} encountered error: ${errMsg}`
+        );
+
+        if (isTransient && attempt < 2) {
+          // Wait 1.5s before retrying same model
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+          continue;
+        }
+
+        // If transient and we have fallback models, move to next model
+        if (isTransient) {
+          break;
+        }
+
+        // For non-transient errors (e.g., authentication, invalid request), fail immediately
+        throw err;
+      }
+    }
+
+    if (response) {
+      break;
+    }
+  }
+
+  if (!response) {
+    let cleanMessage = "The AI service is currently experiencing high demand. Please wait a moment and try again.";
+    if (lastError && typeof lastError === "object" && "message" in lastError) {
+      const raw = String((lastError as any).message);
+      try {
+        const parsedErr = JSON.parse(raw);
+        if (parsedErr?.error?.message) {
+          cleanMessage = parsedErr.error.message;
+        }
+      } catch {
+        cleanMessage = raw;
+      }
+    }
+    throw new Error(cleanMessage);
+  }
 
   const rawText = response.text ?? "";
   if (!rawText || !rawText.trim()) {
