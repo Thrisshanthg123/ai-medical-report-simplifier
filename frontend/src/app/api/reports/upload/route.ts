@@ -248,7 +248,15 @@ export async function POST(request: NextRequest) {
       message: `Report processed successfully. ${savedTests.length} test(s) extracted.`,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Internal server error";
+    let message = err instanceof Error ? err.message : "Internal server error";
+    try {
+      const parsed = JSON.parse(message);
+      if (parsed?.error?.message) {
+        message = parsed.error.message;
+      }
+    } catch {
+      // not JSON string, keep as is
+    }
     console.error("[upload] Error processing upload:", err);
     return NextResponse.json(
       { success: false, error: message },
